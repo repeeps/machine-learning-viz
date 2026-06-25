@@ -122,16 +122,20 @@ const ML=VZ.ML;
   play.innerHTML=`<label>폴드 수 <input type="range" id="slk" min="3" max="6" value="5"> <span id="kv">5</span></label>`+
                  `<button class="btn" id="next1">다음 라운드 ▶</button>`;
   function render(){ const W=460,H=190;
-    let s=ML.kfold(50,40,{k, testFold:round%k, w:W-100, fh:34, title:`라운드 ${round%k+1} — ${round%k+1}번 조각이 시험`});
-    // running average
-    const used=scores.slice(0,k);
-    const avg=used.reduce((a,b)=>a+b,0)/used.length;
-    s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="11" font-family="monospace" fill="${ML.C.muted}">각 라운드 점수: ${used.join(' · ')}</text>`;
-    s+=`<text x="${W/2}" y="150" text-anchor="middle" font-size="22" font-family="monospace" font-weight="800" fill="${ML.C.good}">평균 ${avg.toFixed(1)}점</text>`;
-    s+=`<text x="${W/2}" y="170" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.faint}">← 이게 안정된 최종 성적</text>`;
+    const cur=round%k;                       // 이번 시험 조각
+    const shownN=Math.min(round+1,k);         // 지금까지 끝난 라운드 수
+    const done=shownN>=k;
+    let s=ML.kfold(50,40,{k, testFold:cur, w:W-100, fh:34, title:`라운드 ${cur+1} — ${cur+1}번 조각이 시험`});
+    const revealed=scores.slice(0,shownN);
+    const avg=revealed.reduce((a,b)=>a+b,0)/revealed.length;
+    s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="11" font-family="monospace" fill="${ML.C.muted}">지금까지 점수: ${revealed.join(' · ')}${done?'':' …'}</text>`;
+    s+=`<text x="${W/2}" y="150" text-anchor="middle" font-size="22" font-family="monospace" font-weight="800" fill="${ML.C.good}">${done?'평균':'중간 평균'} ${avg.toFixed(1)}점</text>`;
+    s+=`<text x="${W/2}" y="170" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.faint}">${done?'← 모든 조각이 시험을 봤어요 · 안정된 최종 성적':'← 다음 라운드 ▶ 로 나머지 조각도'}</text>`;
     document.getElementById('s1').innerHTML=ML.svg(W,H,s,'k-폴드');
     document.getElementById('kv').textContent=k;
-    document.getElementById('lab1').innerHTML=`${k}개 조각 중 <b style="color:${ML.C.test}">${round%k+1}번</b>이 시험, 나머지로 학습. 모든 조각이 한 번씩 시험을 본 뒤 점수를 <b style="color:${ML.C.good}">평균(${avg.toFixed(1)})</b> — 한 번의 운빨이 사라졌어요.`;
+    document.getElementById('lab1').innerHTML= done
+      ? `${k}개 조각이 <b>모두 한 번씩</b> 시험을 봤어요. 점수 평균 <b style="color:${ML.C.good}">${avg.toFixed(1)}</b> — 한 번의 운빨이 사라진 안정된 성적이에요.`
+      : `${k}개 조각 중 <b style="color:${ML.C.test}">${cur+1}번</b>이 시험, 나머지로 학습 (지금 <b>${shownN}/${k}</b> 라운드). <b>다음 라운드 ▶</b>를 눌러 모든 조각이 한 번씩 시험 보게 하세요.`;
   }
   document.getElementById('slk').oninput=e=>{k=+e.target.value;round=0;render();};
   document.getElementById('next1').onclick=()=>{round++;render();};
@@ -149,7 +153,7 @@ const ML=VZ.ML;
       s+=`<rect x="40" y="30" width="${W-80}" height="30" rx="6" fill="${ML.C.dead}" opacity="0.2" stroke="${ML.C.dead}" stroke-width="1.4"/>`;
       s+=`<text x="${W/2}" y="50" text-anchor="middle" font-size="10.5" font-family="monospace" fill="${ML.C.dead}">① 전체 데이터로 스케일 평균 계산 (시험 포함 👀)</text>`;
       s+=`<text x="${W/2}" y="80" text-anchor="middle" font-size="10.5" font-family="monospace" fill="${ML.C.muted}">② 그 다음 교차검증 → 점수가 부풀려짐</text>`;
-      s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="13" font-family="monospace" font-weight="700" fill="${ML.C.dead}">⚠ 누수! 시험 정보가 가공에 샘</text>`;
+      s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="12" font-family="monospace" font-weight="700" fill="${ML.C.dead}">⚠ 누수! 시험 정보가 샘</text>`;
     } else {
       s+=`<rect x="40" y="30" width="${(W-80)*0.75}" height="30" rx="6" fill="${ML.C.train}" opacity="0.4" stroke="${ML.C.train}" stroke-width="1.4"/>`;
       s+=`<rect x="${40+(W-80)*0.78}" y="30" width="${(W-80)*0.22}" height="30" rx="6" fill="${ML.C.test}" opacity="0.85" stroke="${ML.C.test}" stroke-width="1.4"/>`;

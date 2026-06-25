@@ -104,7 +104,7 @@ const LIN=[{x:0.22,y:0.68,c:0},{x:0.3,y:0.55,c:0},{x:0.26,y:0.8,c:0},{x:0.38,y:0
     if(svm){ // draw margin band
       const off=0.13;
       [-off,off].forEach(o=>{ s+=`<line x1="${P.px(0)}" y1="${P.py(VZ.clamp(line.b+o,0,1))}" x2="${P.px(1)}" y2="${P.py(VZ.clamp(line.m+line.b+o,0,1))}" stroke="${ML.C.v}" stroke-width="1.3" stroke-dasharray="4 3" opacity="0.8"/>`; });
-      s+=`<text x="${P.px(0.5)}" y="${P.py(0.5)-2}" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.v}">↕ 여백</text>`;
+      s+=`<text x="${P.px(0.5)}" y="${P.py(0.5)-2}" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.v}">↕ 여백(개념 그림)</text>`;
     }
     document.getElementById('s0').innerHTML=ML.svg(W,H,s,'SVM');
     document.getElementById('any0').className='btn'+(!svm?' active':'');

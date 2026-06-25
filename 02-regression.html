@@ -57,7 +57,7 @@
   <section class="panel" data-panel="2">
     <span class="kicker" style="color:var(--v)">Step 02 — Letting the Computer Do It</span>
     <h2>왜 제곱? 그리고 자동으로</h2>
-    <p class="lead">오차를 더할 때 왜 <b>제곱</b>할까요? 그냥 더하면 위로 빗나간 +와 아래로 빗나간 −가 상쇄돼 버려요. 제곱하면 모두 양수가 되고, <b>크게 빗나간 점</b>에 더 큰 벌점이 붙죠. 사실 이런 단순한 선은 공식으로 단번에 답을 구할 수도 있어요. 하지만 <b>더 복잡한 모델</b>은 그게 안 돼서 — 오차가 줄어드는 방향으로 선을 <b>조금씩 자동 반복</b>해 굴려 내려가요(경사하강). ▶를 눌러 그 내리막을 보세요.</p>
+    <p class="lead">오차를 더할 때 왜 <b>제곱</b>할까요? 그냥 더하면 위로 빗나간 +와 아래로 빗나간 −가 상쇄돼 버려요. 제곱하면 모두 양수가 되고, <b>크게 빗나간 점</b>에 더 큰 벌점이 붙죠. 사실 이런 단순한 선은 공식으로 단번에 답을 구할 수도 있어요. 하지만 <b>더 복잡한 모델</b>은 그게 안 돼서 — 오차가 줄어드는 방향으로 선을 <b>조금씩 자동 반복</b>해 굴려 내려가요(이 방법의 이름이 경사하강 — 이름만 알아둬도 충분해요). ▶를 눌러 그 내리막을 보세요.</p>
     <div class="ctl" id="play2"></div>
     <div class="scene" id="s2"></div>
     <p class="big" id="lab2"></p>
@@ -134,7 +134,7 @@ const BEST=(function(){const N=PTS.length;let sx=0,sy=0,sxy=0,sxx=0;PTS.forEach(
   function stepOnce(){ const {gm,gb}=grad(m,b); m-=lr*gm; b-=lr*gb; step++; render(); }
   document.getElementById('step2').onclick=()=>{ if(step<60) stepOnce(); };
   document.getElementById('run2').onclick=()=>{ if(playing){clearInterval(timer);playing=false;document.getElementById('run2').textContent='자동 ▶▶';return;}
-    playing=true; document.getElementById('run2').textContent='⏸ 멈춤'; timer=setInterval(()=>{ if(step>=60){clearInterval(timer);playing=false;document.getElementById('run2').textContent='자동 ▶▶';return;} stepOnce(); },180); };
+    playing=true; document.getElementById('run2').textContent='⏸ 멈춤'; timer=setInterval(()=>{ const vis=document.querySelector('section[data-panel="2"]').classList.contains('show'); if(step>=60||!vis){clearInterval(timer);playing=false;document.getElementById('run2').textContent='자동 ▶▶';return;} stepOnce(); },180); };
   document.getElementById('reset2').onclick=()=>{ if(timer)clearInterval(timer); playing=false; document.getElementById('run2').textContent='자동 ▶▶'; m=0.05;b=0.62;step=0; render(); };
   render();
 })();

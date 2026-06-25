@@ -22,7 +22,7 @@
   <header>
     <div class="tag" style="color:var(--hot)">PART B · 일반화 (기둥) — CH 05</div>
     <h1>과적합 vs 과소적합</h1>
-    <p class="intro">모델의 <b>복잡함</b>은 손잡이 하나로 생각할 수 있어요. 너무 낮추면(단순) — 데이터의 흐름조차 못 따라가는 <b>과소적합</b>. 너무 높이면(복잡) — 진짜 패턴은 물론 <b>잡음까지 외워버리는</b> 과적합. 둘 다 새 데이터에서 망해요. 정답은 그 사이 <b>적당한 지점</b>. 이 챕터에선 복잡도 손잡이를 직접 돌리며, 훈련 오차와 시험 오차가 어떻게 엇갈리는지 봐요.</p>
+    <p class="intro">모델의 <b>복잡함</b>은 손잡이 하나로 생각할 수 있어요. 너무 낮추면(단순) — 데이터의 흐름조차 못 따라가는 <b>과소적합</b>. 너무 높이면(복잡) — 진짜 패턴은 물론 <b>잡음까지 외워버리는</b> 과적합. 둘 다 새 데이터에서 망해요. 정답은 그 사이 <b>적당한 지점</b>. 이 챕터에선 복잡도 손잡이를 직접 돌리며, 훈련 오차와 시험 오차가 어떻게 엇갈리는지 봐요. 이 <b>'복잡도 손잡이'</b>는 앞으로 모든 모델에서 다시 만나요 — 규제의 λ, kNN의 k, 트리의 깊이로.</p>
   </header>
 
   <nav class="stepper" id="stepper">
@@ -127,8 +127,12 @@ function err(fn,pts){ return pts.reduce((a,p)=>{const e=p.y-fn(p.x);return a+e*e
   let mark=5;
   const play=document.getElementById('play1');
   play.innerHTML=`<label>복잡도 <input type="range" id="sl1" min="0" max="10" value="5"></label>`;
-  const N=11; const trA=[],teA=[];
-  for(let i=0;i<N;i++){ const c=i/(N-1); const fn=modelFn(c); trA.push(VZ.clamp(err(fn,TRAIN)*5,0,1)); teA.push(VZ.clamp(err(fn,TEST)*4,0,1)); }
+  const N=11; const trR=[],teR=[];
+  for(let i=0;i<N;i++){ const c=i/(N-1); const fn=modelFn(c); trR.push(err(fn,TRAIN)); teR.push(err(fn,TEST)); }
+  // 두 곡선을 공통 스케일로 정규화해 플롯 높이를 채움(작은 절대값이 바닥에 깔리는 문제 방지)
+  const allE=[...trR,...teR], loE=Math.min(...allE), hiE=Math.max(...allE);
+  const nmE=v=> hiE>loE ? 0.1+0.82*(v-loE)/(hiE-loE) : 0.5;
+  const trA=trR.map(nmE), teA=teR.map(nmE);
   function render(){ const W=460,H=240;
     let s=ML.errPlot(70,18,330,196,{train:trA,test:teA,mark, title:'훈련 오차 vs 시험 오차'});
     document.getElementById('s1').innerHTML=ML.svg(W,H,s,'오차 곡선');

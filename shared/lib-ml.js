@@ -106,7 +106,8 @@
     if (opts.mark != null) { const mx = P.px(opts.mark / (n - 1)); g += `<line x1="${mx}" y1="${y + 4}" x2="${mx}" y2="${y + h - 4}" stroke="var(--hot)" stroke-width="1.2" stroke-dasharray="3 3"/>`; }
     g += `<text x="${x + 10}" y="${y + 14}" font-size="8.5" font-family="JetBrains Mono" fill="${C.train}">▬ 훈련 오차</text>`;
     g += `<text x="${x + 10}" y="${y + 26}" font-size="8.5" font-family="JetBrains Mono" fill="${C.test}">▬ 시험 오차</text>`;
-    g += `<text x="${x + w / 2}" y="${y + h + 13}" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="${C.faint}">모델 복잡도 →</text>`;
+    const xlab = opts.xlabel != null ? opts.xlabel : '모델 복잡도 →';
+    if (xlab) g += `<text x="${x + w / 2}" y="${y + h + 13}" text-anchor="middle" font-size="8.5" font-family="JetBrains Mono" fill="${C.faint}">${esc(xlab)}</text>`;
     return g;
   }
 

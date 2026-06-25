@@ -135,11 +135,14 @@ const TEST=[]; const R2=ML.rng(20); for(let i=0;i<5;i++){const nx=0.1+i*0.2;TEST
   let mark=0;
   const play=document.getElementById('play2');
   play.innerHTML=`<label>규제 세기 <input type="range" id="sl2" min="0" max="10" value="0"></label>`;
-  const N=11; const trA=[],teA=[];
-  for(let i=0;i<N;i++){ const lam=i/(N-1); const fn=modelFn(lam); trA.push(VZ.clamp(err(fn,PTS)*5,0,1)); teA.push(VZ.clamp(err(fn,TEST)*4,0,1)); }
+  const N=11; const trR=[],teR=[];
+  for(let i=0;i<N;i++){ const lam=i/(N-1); const fn=modelFn(lam); trR.push(err(fn,PTS)); teR.push(err(fn,TEST)); }
+  // 두 곡선을 공통 스케일로 정규화해 플롯 높이를 채움
+  const allE=[...trR,...teR], loE=Math.min(...allE), hiE=Math.max(...allE);
+  const nmE=v=> hiE>loE ? 0.1+0.82*(v-loE)/(hiE-loE) : 0.5;
+  const trA=trR.map(nmE), teA=teR.map(nmE);
   function render(){ const W=460,H=240;
-    let s=ML.errPlot(70,18,330,196,{train:trA,test:teA,mark, title:'규제 세기에 따른 오차 (왼=약함)'});
-    s+=`<text x="235" y="232" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">← 약한 규제(과적합)   강한 규제(과소적합) →</text>`;
+    let s=ML.errPlot(70,18,330,196,{train:trA,test:teA,mark, title:'규제 세기에 따른 오차', xlabel:'← 약한 규제(과적합)   ·   강한 규제(과소적합) →'});
     document.getElementById('s2').innerHTML=ML.svg(W,H,s,'적당한 세기');
     const best=teA.indexOf(Math.min(...teA));
     document.getElementById('lab2').innerHTML= mark===best
