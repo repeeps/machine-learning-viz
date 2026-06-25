@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>05 · 과적합 vs 과소적합 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--hot)">PART B · 일반화 (기둥) — CH 05</div>
+    <h1>과적합 vs 과소적합</h1>
+    <p class="intro">모델의 <b>복잡함</b>은 손잡이 하나로 생각할 수 있어요. 너무 낮추면(단순) — 데이터의 흐름조차 못 따라가는 <b>과소적합</b>. 너무 높이면(복잡) — 진짜 패턴은 물론 <b>잡음까지 외워버리는</b> 과적합. 둘 다 새 데이터에서 망해요. 정답은 그 사이 <b>적당한 지점</b>. 이 챕터에선 복잡도 손잡이를 직접 돌리며, 훈련 오차와 시험 오차가 어떻게 엇갈리는지 봐요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 복잡도 손잡이</button>
+    <button data-s="1">01 · 두 오차 곡선</button>
+    <button data-s="2">02 · 데이터가 늘면</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — The Complexity Knob</span>
+    <h2>너무 단순도, 너무 복잡도 곤란</h2>
+    <p class="lead">슬라이더로 모델의 복잡도를 돌려 보세요. 왼쪽 끝 — 거의 직선이라 굽은 데이터를 못 따라가요(과소적합). 오른쪽 끝 — 모든 점을 통과하려 미친 듯 출렁여요(과적합). 회색 점은 훈련, <b style="color:var(--hot)">앰버</b> 점은 시험(학습에 안 쓴 데이터). 시험 점을 잘 맞히는 지점이 어디인지 보세요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 과소(너무 뻣뻣)도 과적합(너무 출렁)도 시험에서 망해요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Two Error Curves</span>
+    <h2>훈련 오차는 계속 줄지만…</h2>
+    <p class="lead">복잡도를 키울수록 <b style="color:var(--q)">훈련 오차</b>는 대체로 계속 줄어요 — 외울수록 본 문제는 잘 맞히니까. 하지만 <b style="color:var(--hot)">시험 오차</b>는 어느 지점까지 줄다가 <b>다시 올라가요</b>. 이 U자의 바닥이 바로 우리가 원하는 "적당한 복잡도". 슬라이더로 그 바닥을 찾아보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 훈련 오차 ↓만 보면 속아요. 시험 오차 U자의 바닥이 정답.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — More Data Helps</span>
+    <h2>데이터가 많으면 덜 외운다</h2>
+    <p class="lead">과적합을 막는 가장 정직한 방법 — <b>데이터를 늘리기</b>. 점이 적으면 복잡한 모델이 잡음을 외우기 쉽지만, 점이 많아지면 외울 게 너무 많아 어쩔 수 없이 <b>큰 흐름</b>을 따라가요. 데이터 양을 늘려 보세요. 같은 복잡도라도 과적합이 줄어들어요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 데이터가 많을수록 복잡한 모델도 잡음을 못 외워요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">과소적합(너무 단순) ↔ 과적합(너무 복잡) 사이의 <b>적당한 지점</b>을 찾는 게 핵심. 시험 오차 U자의 바닥이 그 지점이에요. 그런데 "복잡도가 시험 오차에 미치는 영향"은 사실 두 힘의 합성이에요 — <b>편향</b>과 <b>분산</b>. 이 둘을 과녁 비유로 분해해 보면 훨씬 또렷해져요. 다음 챕터예요.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="06-bias-variance.html" style="color:var(--q);font-weight:700">CH 06 · 편향-분산</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '05 · 과적합 vs 과소적합');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// true underlying curve + noisy samples
+const TRUE=nx=> 0.3+0.45*Math.sin(nx*3.0+0.4);
+const R=ML.rng(7);
+const TRAIN=[], TEST=[];
+for(let i=0;i<9;i++){ const nx=0.06+i*0.105; TRAIN.push({x:nx,y:VZ.clamp(TRUE(nx)+(R()-0.5)*0.22,0.05,0.95)}); }
+for(let i=0;i<5;i++){ const nx=0.12+i*0.19; TEST.push({x:nx,y:VZ.clamp(TRUE(nx)+(R()-0.5)*0.22,0.05,0.95)}); }
+// model of given "complexity" c in 0..1: blend between line and a wiggly interpolation
+function modelFn(c){
+  // low c: linear regression of train; high c: wiggly overfit through train
+  const N=TRAIN.length; let sx=0,sy=0,sxy=0,sxx=0; TRAIN.forEach(p=>{sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sxx+=p.x*p.x;});
+  const d=N*sxx-sx*sx, m=(N*sxy-sx*sy)/d, b=(sy-m*sx)/N;
+  const lin=nx=>m*nx+b;
+  // wiggle term grows with c, frequency grows with c
+  return nx=>{ const base=lin(nx); const overfit=TRUE(nx)+0.35*Math.sin(nx*(6+c*30))*(c); return base*(1-c)+ (TRUE(nx)*0.6+overfit*0.4)*c; };
+}
+function err(fn,pts){ return pts.reduce((a,p)=>{const e=p.y-fn(p.x);return a+e*e;},0)/pts.length; }
+
+// ===== STEP 0: complexity knob =====
+(function(){
+  let c=0.5;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<label>복잡도 <input type="range" id="sl0" min="0" max="100" value="50"> <span id="cv">중간</span></label>`;
+  function render(){ const W=460,H=240; const fn=modelFn(c);
+    let s=ML.curve(70,18,330,200,{pts:TRAIN, testPts:TEST, fn, samples:80, color: c<0.25?ML.C.q:(c>0.7?ML.C.dead:ML.C.good), title:'복잡도를 직접 돌려보세요'});
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'복잡도 손잡이');
+    const lbl= c<0.25?'과소적합 (너무 단순)': c>0.7?'과적합 (너무 복잡)':'적당함';
+    document.getElementById('cv').textContent=lbl;
+    const te=err(fn,TEST);
+    document.getElementById('lab0').innerHTML= c<0.25
+      ? `<b style="color:${ML.C.q}">과소적합</b> — 선이 너무 뻣뻣해 데이터의 굽이를 못 따라가요. 훈련·시험 둘 다 못 맞혀요.`
+      : c>0.7 ? `<b style="color:${ML.C.dead}">과적합</b> — 훈련 점을 통과하려 미친 듯 출렁여요. 시험 점(앰버)에선 크게 빗나가죠. (시험 오차 ${te.toFixed(3)})`
+      : `<b style="color:${ML.C.good}">적당함</b> — 잡음은 무시하고 큰 흐름을 따라가요. 시험 점도 잘 맞혀요. (시험 오차 ${te.toFixed(3)})`;
+  }
+  document.getElementById('sl0').oninput=e=>{c=e.target.value/100;render();};
+  render();
+})();
+
+// ===== STEP 1: two error curves =====
+(function(){
+  let mark=5;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>복잡도 <input type="range" id="sl1" min="0" max="10" value="5"></label>`;
+  const N=11; const trA=[],teA=[];
+  for(let i=0;i<N;i++){ const c=i/(N-1); const fn=modelFn(c); trA.push(VZ.clamp(err(fn,TRAIN)*5,0,1)); teA.push(VZ.clamp(err(fn,TEST)*4,0,1)); }
+  function render(){ const W=460,H=240;
+    let s=ML.errPlot(70,18,330,196,{train:trA,test:teA,mark, title:'훈련 오차 vs 시험 오차'});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'오차 곡선');
+    const bestIdx=teA.indexOf(Math.min(...teA));
+    document.getElementById('lab1').innerHTML= mark===bestIdx
+      ? `딱 시험 오차 바닥! 👏 여기가 과소와 과적합 사이 <b style="color:${ML.C.good}">최적 복잡도</b>예요.`
+      : mark<bestIdx ? `아직 과소적합 쪽 — 복잡도를 더 키우면 시험 오차가 줄어요.`
+      : `과적합 쪽으로 넘어왔어요 — 훈련 오차는 더 줄지만 시험 오차는 올라가죠. 복잡도를 줄여보세요.`;
+  }
+  document.getElementById('sl1').oninput=e=>{mark=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 2: more data helps =====
+(function(){
+  let np=6;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>데이터 양 <input type="range" id="sl2" min="6" max="40" value="6"> <span id="nv">6개</span></label>`;
+  function render(){ const W=460,H=240; const R2=ML.rng(3); const pts=[];
+    for(let i=0;i<np;i++){ const nx=(i+0.5)/np; pts.push({x:nx,y:VZ.clamp(TRUE(nx)+(R2()-0.5)*0.22,0.05,0.95)}); }
+    // fixed high complexity model trying to overfit
+    const fn=nx=>{ // it can only wiggle so much; with many points it must follow trend
+      const overfitStrength=Math.max(0, 0.4 - np*0.008);
+      return TRUE(nx)+overfitStrength*Math.sin(nx*26);
+    };
+    let s=ML.curve(70,18,330,200,{pts, fn, samples:90, color:ML.C.v, title:`같은 복잡도, 데이터 ${np}개`});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'데이터가 늘면');
+    document.getElementById('nv').textContent=`${np}개`;
+    document.getElementById('lab2').innerHTML= np<14
+      ? `점이 적으니(<b>${np}개</b>) 모델이 잡음을 외울 여지가 많아 출렁여요.`
+      : `점이 많아지니(<b>${np}개</b>) 외울 게 너무 많아 — 어쩔 수 없이 <b style="color:${ML.C.good}">큰 흐름</b>을 따라가요. 곡선이 차분해졌죠.`;
+  }
+  document.getElementById('sl2').oninput=e=>{np=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">적당한 복잡도 찾기</text>`;
+  const rows=[['과소적합','너무 단순 — 흐름도 못 따라감','var(--q)'],['과적합','너무 복잡 — 잡음까지 외움','var(--dead)'],['처방','시험오차 U자 바닥 + 데이터↑','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='이 시험 오차 곡선의 정체는 편향+분산 — 다음 챕터에서 과녁으로 분해해요.';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07 · 규제 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--hot)">PART B · 일반화 (기둥) — CH 07</div>
+    <h1>규제 (Regularization)</h1>
+    <p class="intro">과적합한 모델의 곡선을 보면 — 진폭이 크고 미친 듯 출렁여요. 그 출렁임은 모델 내부 숫자(가중치)가 <b>극단적으로 커진</b> 결과예요. 그렇다면 간단한 처방이 있어요: "큰 숫자에 <b>벌점</b>을 매기자". 모델은 이제 두 가지를 동시에 신경 써요 — 점을 잘 맞추되, 숫자를 너무 키우지 말 것. 그 균형으로 출렁이던 곡선이 <b>차분해져요</b>. 이게 규제예요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 벌점</button>
+    <button data-s="1">01 · 손잡이 돌리기</button>
+    <button data-s="2">02 · 적당한 세기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — A Penalty on Complexity</span>
+    <h2>"점수 = 잘 맞춤 − 벌점"</h2>
+    <p class="lead">규제 없이는 모델의 목표가 "<b>훈련 점을 잘 맞추기</b>" 하나뿐이에요. 규제를 넣으면 목표가 둘이 돼요 — 잘 맞추기 <b>그리고</b> 숫자(가중치)를 작게 유지하기. 곡선을 과하게 휘려면 큰 숫자가 필요한데, 거기에 벌점이 붙으니 모델이 스스로 <b>매끄러운 쪽</b>을 택해요.</p>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 목표에 "숫자를 작게"라는 항을 더해, 과한 출렁임을 억제.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Turn the Knob</span>
+    <h2>규제 세기를 돌려보기</h2>
+    <p class="lead">규제의 세기는 손잡이 하나(흔히 람다라 불러요)로 조절해요. <b>0이면</b> 규제 없음 — 모델이 마음껏 출렁여 과적합. <b>키울수록</b> 곡선이 점점 펴지다가, 너무 키우면 거의 직선이 돼 이번엔 과소적합. 슬라이더로 출렁임이 펴지는 걸 직접 보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 규제↑ = 곡선이 펴짐. 0이면 과적합, 너무 크면 과소적합.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Sweet Spot</span>
+    <h2>시험 오차로 세기를 고른다</h2>
+    <p class="lead">규제 세기도 결국 <b>하이퍼파라미터</b>(사람이 고르는 값)예요. 너무 약하면 과적합, 너무 강하면 과소적합 — 그 사이에 시험 오차가 최소가 되는 지점이 있어요. 슬라이더로 그 바닥을 찾아보세요. (실전에선 이걸 검증셋·교차검증으로 골라요, CH 13.)</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 규제 세기 = 하이퍼파라미터. 검증으로 적당한 값을 골라요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">규제 = 복잡함(큰 가중치)에 벌점을 매겨 모델을 매끄럽게 — 분산을 누르는 대표적 도구예요. 여기까지가 PART B(일반화): 외우기 말고 배우기, 과적합 진단, 편향-분산, 그리고 규제. 이제 기둥을 옮겨가요 — 실제로 어떤 <b>모델</b>들이 있고 어떻게 작동하는지. kNN·트리·숲을 차례로 만나는 <b>모델 동물원</b>(PART C)으로.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="08-knn.html" style="color:var(--q);font-weight:700">CH 08 · kNN — 이웃에게 묻기</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '07 · 규제');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+const TRUE=nx=>0.35+0.4*Math.sin(nx*2.6+0.3);
+const R=ML.rng(5); const PTS=[];
+for(let i=0;i<8;i++){ const nx=0.07+i*0.12; PTS.push({x:nx,y:VZ.clamp(TRUE(nx)+(R()-0.5)*0.24,0.05,0.95)}); }
+// model: lambda 0 -> wiggly overfit; mid -> good (fitted line); high -> flat constant (underfit)
+const MEAN=PTS.reduce((a,p)=>a+p.y,0)/PTS.length;
+function modelFn(lam){ // lam 0..1
+  const N=PTS.length;let sx=0,sy=0,sxy=0,sxx=0;PTS.forEach(p=>{sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sxx+=p.x*p.x;});const d=N*sxx-sx*sx;const m=(N*sxy-sx*sy)/d;const b=(sy-m*sx)/N;
+  const lin=nx=>m*nx+b;
+  const wig=nx=>{ let yy=TRUE(nx)*0.4; PTS.forEach(p=>{ const w=Math.exp(-((nx-p.x)*(nx-p.x))/0.0025); yy=yy*(1-w)+p.y*w; }); return yy; };
+  // 0→0.5: overfit→good ; 0.5→1: good→flat constant (over-regularized = underfit)
+  if(lam<=0.5){ const t=lam/0.5; return nx=> wig(nx)*(1-t)+lin(nx)*t; }
+  const t=(lam-0.5)/0.5; return nx=> lin(nx)*(1-t)+MEAN*t;
+}
+function err(fn,pts){ return pts.reduce((a,p)=>{const e=p.y-fn(p.x);return a+e*e;},0)/pts.length; }
+const TEST=[]; const R2=ML.rng(20); for(let i=0;i<5;i++){const nx=0.1+i*0.2;TEST.push({x:nx,y:VZ.clamp(TRUE(nx)+(R2()-0.5)*0.24,0.05,0.95)});}
+
+// ===== STEP 0: penalty concept =====
+(function(){ const W=460,H=200; let s='';
+  s+=`<rect x="30" y="40" width="180" height="120" rx="12" fill="var(--panel)" stroke="${ML.C.dead}" stroke-width="1.6"/>`;
+  s+=`<text x="120" y="62" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.dead}">규제 없음</text>`;
+  s+=ML.curve(40,72,160,80,{pts:PTS, fn:modelFn(0), samples:60, color:ML.C.dead});
+  s+=`<rect x="250" y="40" width="180" height="120" rx="12" fill="var(--panel)" stroke="${ML.C.good}" stroke-width="1.6"/>`;
+  s+=`<text x="340" y="62" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.good}">규제 있음</text>`;
+  s+=ML.curve(260,72,160,80,{pts:PTS, fn:modelFn(0.55), samples:60, color:ML.C.good});
+  document.getElementById('s0').innerHTML=ML.svg(W,H,s,'벌점');
+  document.getElementById('lab0').innerHTML=`<b style="color:${ML.C.dead}">규제 없으면</b> 점을 다 통과하려 출렁여요. <b style="color:${ML.C.good}">벌점을 매기면</b> 큰 숫자를 피해 매끄러운 곡선을 택하죠 — 같은 데이터, 다른 목표.`;
+})();
+
+// ===== STEP 1: turn the knob =====
+(function(){
+  let lam=0;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>규제 세기 λ <input type="range" id="sl1" min="0" max="100" value="0"> <span id="lv">0</span></label>`;
+  function render(){ const W=460,H=240; const fn=modelFn(lam);
+    let s=ML.curve(70,18,330,200,{pts:PTS, testPts:TEST, fn, samples:80, color: lam<0.12?ML.C.dead:(lam>0.8?ML.C.q:ML.C.good), title:`규제 세기 λ = ${(lam).toFixed(2)}`});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'규제 손잡이');
+    document.getElementById('lv').textContent=lam.toFixed(2);
+    document.getElementById('lab1').innerHTML= lam<0.12
+      ? `<b style="color:${ML.C.dead}">λ≈0</b> — 규제 거의 없음. 곡선이 점을 쫓아 출렁여요(과적합).`
+      : lam>0.8 ? `<b style="color:${ML.C.q}">λ 너무 큼</b> — 벌점이 과해 거의 직선. 이번엔 흐름을 못 따라가요(과소적합).`
+      : `<b style="color:${ML.C.good}">적당한 λ</b> — 잡음은 무시하고 큰 흐름만. 곡선이 차분해졌죠.`;
+  }
+  document.getElementById('sl1').oninput=e=>{lam=e.target.value/100;render();};
+  render();
+})();
+
+// ===== STEP 2: sweet spot via error curve =====
+(function(){
+  let mark=0;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>규제 세기 <input type="range" id="sl2" min="0" max="10" value="0"></label>`;
+  const N=11; const trA=[],teA=[];
+  for(let i=0;i<N;i++){ const lam=i/(N-1); const fn=modelFn(lam); trA.push(VZ.clamp(err(fn,PTS)*5,0,1)); teA.push(VZ.clamp(err(fn,TEST)*4,0,1)); }
+  function render(){ const W=460,H=240;
+    let s=ML.errPlot(70,18,330,196,{train:trA,test:teA,mark, title:'규제 세기에 따른 오차 (왼=약함)'});
+    s+=`<text x="235" y="232" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">← 약한 규제(과적합)   강한 규제(과소적합) →</text>`;
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'적당한 세기');
+    const best=teA.indexOf(Math.min(...teA));
+    document.getElementById('lab2').innerHTML= mark===best
+      ? `시험 오차 최소! 👏 이 규제 세기가 과적합과 과소적합의 <b style="color:${ML.C.good}">균형점</b>이에요.`
+      : mark<best? `규제가 약해 아직 과적합 쪽 — 조금 더 키워보세요.`
+      : `규제가 너무 강해 과소적합 쪽 — 조금 줄여보세요.`;
+  }
+  document.getElementById('sl2').oninput=e=>{mark=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">복잡함에 벌점</text>`;
+  const rows=[['아이디어','큰 가중치에 벌점 → 매끈','var(--q)'],['손잡이','λ — 약하면 과적합, 세면 과소','var(--v)'],['효과','분산을 눌러 일반화 ↑','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='일반화 기둥 완성! 다음 기둥은 실제 모델들 — kNN·트리·숲의 동물원.';
+})();
+</script>
+</body>
+</html>

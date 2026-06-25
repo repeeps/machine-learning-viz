@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>16 · 너머 · 회고 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .recap{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+  .rcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .rcard h4{margin:0 0 4px;font-size:13px;font-family:'JetBrains Mono',monospace}
+  .rcard p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.55}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--good)">PART E · 현실과 종합 — CH 16</div>
+    <h1>너머 · 회고</h1>
+    <p class="intro">이 트랙은 지도학습의 멘탈 모델을 다뤘어요 — 하지만 그 너머에 더 넓은 풍경이 있죠. 여기선 자주 듣는 세 갈래를 <b>예고편</b>으로만 봐요: 가장 넓은 길을 찾는 <b>SVM</b>, 정답 없이 구조를 찾는 <b>비지도학습</b>, 특징을 스스로 배우는 <b>딥러닝</b>. 그리고 마지막으로, 이 트랙 전체를 한 장으로 회고해요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · SVM</button>
+    <button data-s="1">01 · 정답이 없다면</button>
+    <button data-s="2">02 · 딥러닝으로</button>
+    <button data-s="3">03 · 회고</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--good)">Step 00 — SVM: Widest Street</span>
+    <h2>가장 넓은 길로 가르기</h2>
+    <p class="lead">두 무리를 가르는 직선은 무수히 많아요. <b>SVM</b>의 아이디어는 — 그중 양쪽 점에서 <b>가장 멀리 떨어진</b>, 즉 <b>여백(거리)이 가장 넓은</b> 경계를 고르자는 거예요. 길이 넓을수록 새 점이 와도 안전하니까요. 토글로 아무 경계와 최대-여백 경계를 비교해 보세요. (수학은 깊지만, 직관은 "가장 넓은 길".)</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ SVM = 여백이 가장 넓은 경계. 같은 분리도 더 안전하게.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — No Labels?</span>
+    <h2>정답표가 없을 때</h2>
+    <p class="lead">지금까지는 늘 <b>정답(라벨)</b>이 있었어요. 그런데 라벨이 <b>아예 없다면</b>? 그래도 데이터 속 <b>구조</b>는 찾을 수 있어요 — 비슷한 것끼리 무리 짓기(군집화)처럼. 이게 <b>비지도학습</b>이에요. ▶로 라벨 없는 점들이 자연스러운 무리로 묶이는 걸 보세요. "정답을 맞히기"가 아니라 "구조를 발견하기"가 목표죠.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 비지도학습: 라벨 없이 구조(무리·패턴)를 발견.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Toward Deep Learning</span>
+    <h2>특징을 스스로 배우는 모델</h2>
+    <p class="lead">CH 14에서 봤듯, 좋은 특징을 사람이 만드는 건 어렵고 중요해요. <b>딥러닝</b>의 핵심 전환은 — 그 <b>특징 만들기마저 모델이 스스로</b> 하게 두는 거예요. 층을 거듭 쌓아 날 데이터(픽셀·소리)에서 점점 추상적인 특징을 자동으로 빚죠. 이미지·언어처럼 특징을 손으로 만들기 힘든 영역에서 강력해요. (이건 별도 트랙의 큰 주제예요 — 여기선 다리만.)</p>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 딥러닝: 특징 공학까지 자동화. 같은 일반화·과적합 원리 위에서.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Recap</span>
+    <h2>트랙 회고 — 한 장으로</h2>
+    <p class="lead">먼 길을 왔어요. 핵심만 한 장에 모았어요. 이 다섯 기둥이 머릿속에 남으면, 어떤 머신러닝 글·강의를 만나도 "아, 이건 그 흐름의 어느 칸이구나" 하고 자리를 잡을 수 있을 거예요.</p>
+    <div class="recap" id="recap"></div>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 처음으로 → <a href="index.html" style="color:var(--q);font-weight:700">목차</a> · <a href="00-intro.html" style="color:var(--q);font-weight:700">0번 다시 보기</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '16 · 너머 · 회고');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+const LIN=[{x:0.22,y:0.68,c:0},{x:0.3,y:0.55,c:0},{x:0.26,y:0.8,c:0},{x:0.38,y:0.62,c:0},{x:0.18,y:0.5,c:0},
+           {x:0.72,y:0.36,c:1},{x:0.8,y:0.48,c:1},{x:0.76,y:0.24,c:1},{x:0.64,y:0.4,c:1},{x:0.84,y:0.32,c:1}];
+
+// ===== STEP 0: SVM widest margin =====
+(function(){
+  let svm=false;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="any0">아무 경계</button><button class="btn" id="svm0">최대 여백(SVM)</button>`;
+  function render(){ const W=460,H=240; const P=ML.plane({x:70,y:18,w:330,h:200});
+    // boundary line: y = m x + b ; "any" tilted near one class, svm centered
+    const line = svm? {m:0.85,b:0.06} : {m:1.5,b:-0.25};
+    let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=> y < line.m*x+line.b ? 1:0, pts:LIN, cols:20, rows:14, title: svm?'최대 여백 — 가장 넓은 길':'아무 경계 — 한쪽에 바짝'});
+    if(svm){ // draw margin band
+      const off=0.13;
+      [-off,off].forEach(o=>{ s+=`<line x1="${P.px(0)}" y1="${P.py(VZ.clamp(line.b+o,0,1))}" x2="${P.px(1)}" y2="${P.py(VZ.clamp(line.m+line.b+o,0,1))}" stroke="${ML.C.v}" stroke-width="1.3" stroke-dasharray="4 3" opacity="0.8"/>`; });
+      s+=`<text x="${P.px(0.5)}" y="${P.py(0.5)-2}" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.v}">↕ 여백</text>`;
+    }
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'SVM');
+    document.getElementById('any0').className='btn'+(!svm?' active':'');
+    document.getElementById('svm0').className='btn'+(svm?' active':'');
+    document.getElementById('lab0').innerHTML= svm
+      ? `<b style="color:${ML.C.v}">SVM</b> — 양쪽 점에서 똑같이 멀리, <b>여백(점선 사이)이 최대</b>인 경계. 길이 넓어 새 점이 와도 덜 흔들려요.`
+      : `<b style="color:${ML.C.dead}">아무 경계</b> — 분리는 되지만 한쪽 무리에 바짝 붙었어요. 새 점이 조금만 달라도 틀리기 쉽죠.`;
+  }
+  document.getElementById('any0').onclick=()=>{svm=false;render();};
+  document.getElementById('svm0').onclick=()=>{svm=true;render();};
+  render();
+})();
+
+// ===== STEP 1: unsupervised clustering =====
+(function(){
+  let clustered=false;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="raw1">라벨 없는 점</button><button class="btn" id="cl1">무리 찾기 ▶</button>`;
+  const PTS=[{x:0.25,y:0.7},{x:0.3,y:0.62},{x:0.2,y:0.78},{x:0.35,y:0.72},{x:0.28,y:0.55},
+             {x:0.72,y:0.35},{x:0.78,y:0.42},{x:0.7,y:0.28},{x:0.82,y:0.36},{x:0.66,y:0.4},
+             {x:0.55,y:0.78},{x:0.6,y:0.85},{x:0.5,y:0.72},{x:0.62,y:0.7}];
+  function group(p){ // assign to nearest of 3 centers
+    const C=[[0.27,0.67],[0.74,0.36],[0.57,0.77]];
+    let bi=0,bd=9; C.forEach((c,i)=>{const d=(p.x-c[0])**2+(p.y-c[1])**2; if(d<bd){bd=d;bi=i;}}); return bi; }
+  function render(){ const W=460,H=240; const P=ML.plane({x:70,y:18,w:330,h:200}); let s=P.frame();
+    s+=`<text x="235" y="12" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">${clustered?'비슷한 것끼리 무리(군집)':'라벨이 없는 점들 — 회색뿐'}</text>`;
+    PTS.forEach(p=>{ const col= clustered? ML.clsCol(group(p)) : ML.C.slate;
+      s+=`<circle cx="${P.px(p.x).toFixed(1)}" cy="${P.py(p.y).toFixed(1)}" r="5.5" fill="${col}" opacity="0.9" stroke="var(--bg)" stroke-width="1"/>`; });
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'군집화');
+    document.getElementById('raw1').className='btn'+(!clustered?' active':'');
+    document.getElementById('cl1').className='btn'+(clustered?' active':'');
+    document.getElementById('lab1').innerHTML= clustered
+      ? `정답을 준 적 없는데 — 가까운 것끼리 <b>세 무리</b>로 묶였어요. 색=발견된 군집. 이게 비지도학습(군집화)이에요.`
+      : `라벨이 하나도 없어요(다 회색). 지도학습은 여기서 막히죠. 하지만 점들의 <b>분포</b>엔 구조가 있어요 — ▶를 눌러보세요.`;
+  }
+  document.getElementById('raw1').onclick=()=>{clustered=false;render();};
+  document.getElementById('cl1').onclick=()=>{clustered=true;render();};
+  render();
+})();
+
+// ===== STEP 2: deep learning bridge =====
+(function(){ const W=460,H=200; let s='';
+  // layered network: raw -> learned features -> output
+  const layers=[['픽셀·소리','날 데이터',ML.C.slate,4],['저수준 특징','선·모서리',ML.C.q,5],['고수준 특징','형태·개념',ML.C.v,4],['예측','고양이/개',ML.C.good,2]];
+  const lx=[55,180,300,415];
+  layers.forEach((L,li)=>{ const n=L[3]; const y0=H/2-(n-1)*15;
+    for(let i=0;i<n;i++){ const cy=y0+i*30;
+      s+=`<circle cx="${lx[li]}" cy="${cy}" r="7" fill="var(--panel)" stroke="${L[2]}" stroke-width="1.6"/>`;
+      if(li<layers.length-1){ const nN=layers[li+1][3]; const y1=H/2-(nN-1)*15;
+        for(let j=0;j<nN;j++){ s+=`<line x1="${lx[li]+7}" y1="${cy}" x2="${lx[li+1]-7}" y2="${y1+j*30}" stroke="${L[2]}" stroke-width="0.5" opacity="0.3"/>`; } }
+    }
+    s+=`<text x="${lx[li]}" y="20" text-anchor="middle" font-size="9.5" font-family="monospace" font-weight="700" fill="${L[2]}">${L[0]}</text>`;
+    s+=`<text x="${lx[li]}" y="${H-10}" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">${L[1]}</text>`;
+  });
+  document.getElementById('s2').innerHTML=ML.svg(W,H,s,'딥러닝');
+  document.getElementById('lab2').innerHTML=`층을 쌓아 — 날 데이터에서 <b style="color:${ML.C.q}">저수준</b>(선·모서리) → <b style="color:${ML.C.v}">고수준</b>(형태·개념) 특징을 <b>스스로</b> 빚어요. 사람이 특징을 손으로 안 만들어도 되죠. 단, 일반화·과적합 같은 원리는 그대로예요.`;
+})();
+
+// ===== STEP 3: recap =====
+(function(){
+  const cards=[
+    ['A · 무엇을 배우나','특징·라벨로 회귀(선)·분류(경계). 예시→모델→예측.','var(--q)'],
+    ['B · 일반화 (기둥)','암기 말고 일반화. 과적합↔과소, 편향-분산, 규제.','var(--hot)'],
+    ['C · 모델 동물원 (기둥)','kNN(이웃)·트리(스무고개)·앙상블(숲).','var(--hot)'],
+    ['D · 평가','정확도 함정·혼동행렬·정밀도/재현율·교차검증.','var(--q)'],
+    ['E · 현실·종합','특징이 절반·전체 파이프라인·너머.','var(--good)'],
+  ];
+  document.getElementById('recap').innerHTML=cards.map(c=>
+    `<div class="rcard" style="border-color:${c[2]}"><h4 style="color:${c[2]}">${c[0]}</h4><p>${c[1]}</p></div>`).join('');
+  const W=460,H=70; let s=`<text x="${W/2}" y="42" text-anchor="middle" font-size="14" font-family="monospace" font-weight="800" fill="${ML.C.good}">데이터에서 규칙을 배운다 — 끝까지 왔어요 🎉</text>`;
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'회고');
+  document.getElementById('lab3').innerHTML='이 다섯 기둥이 곧 지도예요. 어떤 새 모델·기법을 만나도, 이 흐름의 어느 칸인지 자리를 잡아보세요.';
+})();
+</script>
+</body>
+</html>

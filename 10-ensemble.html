@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10 · 앙상블 — 여럿이 모이면 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(192,132,252,.08);border:1px solid var(--v);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--v)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART C · 모델 동물원 (기둥) — CH 10</div>
+    <h1>앙상블 — 여럿이 모이면</h1>
+    <p class="intro">트리 한 그루는 똑똑하지만 변덕스러워요. 그렇다면 — 여러 그루를 길러 <b>의견을 모으면</b> 어떨까요? 군중의 추측이 한 전문가보다 정확할 때가 많은 것처럼, 모델도 그래요. 이게 <b>앙상블</b>이에요. 모으는 방식은 크게 둘 — 여러 모델을 <b>독립으로 길러 다수결</b>(배깅·랜덤포레스트)하거나, 모델을 <b>차례로 길러 앞의 실수를 보완</b>(부스팅)하죠. 둘 다 "혼자보다 여럿"이라는 같은 직관에서 출발해요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 다수결의 힘</button>
+    <button data-s="1">01 · 배깅 — 독립 다수결</button>
+    <button data-s="2">02 · 부스팅 — 실수 보완</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — Wisdom of the Crowd</span>
+    <h2>흔들리는 여럿을 모으면 안정된다</h2>
+    <p class="lead">변덕스러운(고분산) 트리 여러 개의 경계를 겹쳐 평균을 내면 — 각자의 들쭉날쭉함이 서로 <b>상쇄</b>되며 매끈해져요. 트리 수를 늘려 보세요. 한 그루일 땐 각져 있던 경계가, 여럿을 모을수록 부드럽고 안정적으로 변해요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 흔들리는 여럿의 평균 = 흔들림이 상쇄돼 안정.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — Bagging</span>
+    <h2>제비뽑기로 다른 트리를 기른다</h2>
+    <p class="lead"><b>배깅</b>은 같은 데이터에서 매번 <b>조금씩 다른 표본</b>을 뽑아(제비뽑기) 트리를 따로따로 길러요. 트리들이 서로 다르게 실수하니, 다수결로 모으면 그 실수가 상쇄되죠. 랜덤포레스트는 여기에 "질문할 특징도 일부만 무작위로" 보태 트리들을 더 다양하게 만들어요. 핵심 효과는 — <b>변덕(분산)을 크게 줄이는 것</b>.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 배깅: 독립 표본 → 독립 트리 → 다수결. 주로 분산을 낮춰요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Boosting</span>
+    <h2>앞이 틀린 곳을 다음이 메운다</h2>
+    <p class="lead"><b>부스팅</b>은 다르게 모아요 — 트리를 <b>차례로</b> 기르되, 각 트리는 <b>앞 트리가 틀린 점</b>에 집중해요. 틀린 점에 가중치를 더 줘서 다음 트리가 거길 메우게 하죠. 약한 트리들이 릴레이로 약점을 보완하며 점점 정확해져요. 단계를 진행하며 틀린 점(테두리)이 줄어드는 걸 보세요. 핵심 효과는 — <b>못 맞히던 것(편향)을 줄이는 것</b>.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">⚖️ <b>정확히 말하면</b> — 배깅은 <b>주로</b> 분산을, 부스팅은 <b>주로</b> 편향을 낮추는 경향이 있어요. 하지만 "배깅=분산만, 부스팅=편향만"은 아니에요 — 부스팅도 분산에 영향을 주고, 과하면 과적합해요. "독립으로 모으면 흔들림이 줄고, 차례로 보완하면 못 맞히던 게 준다"는 <b>방향성</b>으로 기억하는 게 안전해요.</div>
+    <p class="note" style="margin-top:6px">→ 부스팅: 순차적 약점 보완. 주로 편향을 낮추되, 과하면 과적합.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">앙상블 = 모델 여럿을 모아 혼자보다 강하게. 독립 다수결(배깅·랜덤포레스트)은 흔들림을 줄이고, 순차 보완(부스팅)은 못 맞히던 걸 메워요 — 실전에서 가장 강력한 도구 중 하나죠. 여기까지가 PART C(모델 동물원): kNN·트리·숲. 이제 마지막 기둥 옆 영역으로 — 이 모델들을 <b>제대로 평가</b>하는 법. "정확도 99%"가 거짓말일 수 있다는 이야기부터 시작해요(PART D).</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="11-confusion.html" style="color:var(--q);font-weight:700">CH 11 · 정확도의 함정</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '10 · 앙상블 — 여럿이 모이면');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+const DATA=[{x:0.22,y:0.7,c:0},{x:0.3,y:0.55,c:0},{x:0.25,y:0.82,c:0},{x:0.4,y:0.68,c:0},{x:0.15,y:0.5,c:0},{x:0.45,y:0.42,c:0},{x:0.35,y:0.3,c:0},
+            {x:0.7,y:0.34,c:1},{x:0.8,y:0.46,c:1},{x:0.75,y:0.22,c:1},{x:0.62,y:0.36,c:1},{x:0.85,y:0.32,c:1},{x:0.6,y:0.62,c:1},{x:0.8,y:0.68,c:1}];
+
+// 약한 결정트리(축에 평행한 계단 경계) — 시드마다 다른 임계값/2차 분기
+function weakTree(s){ const R=ML.rng(s*131+7);
+  const t1=0.5+(R()-0.5)*0.28;     // 1차 세로 분기 ~0.36..0.64
+  const hasSecond=R()<0.6;         // 2차 분기 여부
+  const ty=0.4+(R()-0.5)*0.5;      // 2차 가로 임계값
+  const topBack=R()<0.5;           // 오른쪽 어느 구석을 0으로 되돌릴지
+  return (x,y)=>{
+    if(x<t1) return 0;                                   // 왼쪽 -> class0
+    if(hasSecond && (topBack? y>ty : y<ty)) return 0;    // 오른쪽 한 구석을 0으로
+    return 1;                                            // 나머지 오른쪽 -> class1
+  };
+}
+
+// ===== STEP 0: wisdom of crowd (average of many) =====
+(function(){
+  let n=1;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<label>트리 수 <input type="range" id="sl0" min="1" max="40" value="1"> <span id="nv">1</span></label>`;
+  function ensemble(x,y){ let v=0; for(let i=0;i<n;i++){ v+=weakTree(i+1)(x,y); } return v/n>=0.5?1:0; }
+  function render(){ const W=460,H=240;
+    let s=ML.boundary(70,18,330,200,{regionFn:ensemble, pts:DATA, cols:26, rows:18, title:`트리 ${n}그루의 다수결`});
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'다수결');
+    document.getElementById('nv').textContent=n;
+    document.getElementById('lab0').innerHTML= n===1
+      ? `<b>1그루</b> — 경계가 한 트리의 변덕 그대로 출렁여요(고분산).`
+      : `<b>${n}그루</b>의 다수결 — 각자의 들쭉날쭉함이 상쇄돼 경계가 부드러워졌죠. 모을수록 안정적이에요.`;
+  }
+  document.getElementById('sl0').oninput=e=>{n=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 1: bagging =====
+(function(){
+  let show=0; // 0 individuals, 1 combined
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="ind1">개별 트리 3그루</button><button class="btn" id="cmb1">다수결로 합치기</button>`;
+  function render(){ const W=460,H=240;
+    if(show===0){
+      let s=`<text x="230" y="13" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">서로 다른 표본 → 서로 다른 트리 (계단 경계)</text>`;
+      [0,1,2].forEach(k=>{ const fn=weakTree((k+1)*9); const bx=12+k*150;
+        s+=ML.boundary(bx,24,142,178,{regionFn:fn, pts:DATA, cols:11, rows:13, r:3});
+        s+=`<text x="${bx+71}" y="218" text-anchor="middle" font-size="9.5" font-family="monospace" fill="${ML.C.v}">트리 ${k+1}</text>`;
+      });
+      document.getElementById('s1').innerHTML=ML.svg(460,232,s,'개별 트리');
+      document.getElementById('lab1').innerHTML=`표본을 제비뽑기로 바꿔 기른 <b>3그루</b>의 경계가 제각각이에요(각자 다른 계단 모양). 각자 다르게 실수하죠.`;
+    } else {
+      const ens=(x,y)=>{ let v=0; for(let k=1;k<=15;k++) v+=weakTree(k*9)(x,y); return v/15>=0.5?1:0; };
+      let s=ML.boundary(70,18,330,200,{regionFn:ens, pts:DATA, cols:26, rows:18, title:'15그루 다수결 = 랜덤포레스트'});
+      document.getElementById('s1').innerHTML=ML.svg(W,H,s,'합친 결과');
+      document.getElementById('lab1').innerHTML=`다수결로 합치니 제각각이던 실수가 <b>상쇄</b>돼 안정적인 경계가 나왔어요. 한 그루의 변덕(분산)이 크게 줄었죠.`;
+    }
+    document.getElementById('ind1').className='btn'+(show===0?' active':'');
+    document.getElementById('cmb1').className='btn'+(show===1?' active':'');
+  }
+  document.getElementById('ind1').onclick=()=>{show=0;render();};
+  document.getElementById('cmb1').onclick=()=>{show=1;render();};
+  render();
+})();
+
+// ===== STEP 2: boosting =====
+(function(){
+  let round=1;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<button class="btn" id="prev2">◀</button><button class="btn" id="next2">다음 단계 ▶</button><span class="note" id="cnt2" style="margin-left:8px"></span>`;
+  // simulate: each round fixes some misclassified points; track a "current model" as union of stumps
+  function modelCls(x,y,r){ // more rounds -> better fit to the two clusters
+    const base = (x>0.5)?1:0;
+    if(r>=2){ if(x>0.45 && y>0.58) return 0; } // fix a misclassified blue-region top-left class0
+    if(r>=3){ if(x<0.5 && y<0.35) return 0; }
+    return base;
+  }
+  function render(){ const W=460,H=240;
+    // count misclassified
+    let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=>modelCls(x,y,round), cols:26, rows:18, title:`부스팅 ${round}단계`});
+    const P=ML.plane({x:70,y:18,w:330,h:200});
+    let wrong=0;
+    DATA.forEach(p=>{ const pred=modelCls(p.x,p.y,round); const ok=pred===p.c; if(!ok)wrong++;
+      s+=`<circle cx="${P.px(p.x).toFixed(1)}" cy="${P.py(p.y).toFixed(1)}" r="${ok?4.5:6}" fill="${ML.clsCol(p.c)}" stroke="${ok?'var(--bg)':ML.C.dead}" stroke-width="${ok?1:2.4}"/>`; });
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'부스팅');
+    document.getElementById('cnt2').textContent=`${round}단계 · 오답 ${wrong}`;
+    document.getElementById('lab2').innerHTML= round===1
+      ? `1단계 — 거친 첫 모델. 빨간 테두리 점이 <b>틀린 곳</b>(오답 ${wrong}개). 다음 트리가 여기 집중해요.`
+      : `${round}단계 — 앞 단계가 틀린 점을 메우니 오답이 <b style="color:${ML.C.good}">${wrong}개</b>로 줄었어요. 약한 트리들이 릴레이로 약점을 보완하죠.`;
+  }
+  document.getElementById('next2').onclick=()=>{round=Math.min(3,round+1);render();};
+  document.getElementById('prev2').onclick=()=>{round=Math.max(1,round-1);render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">혼자보다 여럿</text>`;
+  const rows=[['배깅/숲','독립 다수결 · 주로 분산↓','var(--q)'],['부스팅','순차 보완 · 주로 편향↓','var(--v)'],['공통','약한 모델 여럿 → 강한 하나','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='모델은 충분히 봤어요 — 다음은 "잘한다"를 제대로 재는 법(평가).';
+})();
+</script>
+</body>
+</html>

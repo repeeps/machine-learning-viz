@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>08 · kNN — 이웃에게 묻기 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(55,189,248,.08);border:1px solid var(--q);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--q)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART C · 모델 동물원 (기둥) — CH 08</div>
+    <h1>kNN — 이웃에게 묻기</h1>
+    <p class="intro">가장 직관적인 분류기로 시작해요. 새 점이 어느 종류인지 모르겠다면 — <b>가장 가까운 이웃 k명</b>에게 물어 다수결로 정하면 되잖아요? 이게 <b>k-최근접 이웃(kNN)</b>이에요. 놀랍게도 "학습"이랄 게 거의 없어요 — 데이터를 그냥 <b>기억</b>해 뒀다가, 예측할 때 거리를 재죠. 단순하지만, k를 몇으로 둘지와 "<b>가깝다</b>"를 어떻게 잴지가 결과를 완전히 바꿔요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 다수결</button>
+    <button data-s="1">01 · k 손잡이</button>
+    <button data-s="2">02 · 스케일의 함정</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — Majority Vote</span>
+    <h2>가까운 k명에게 묻는다</h2>
+    <p class="lead">물음표 점(새 입력)이 어느 종류일까요? kNN의 답은 단순해요 — 가장 가까운 <b>k개</b> 이웃을 찾아, 그들의 다수결로 정해요. k=3이면 가까운 3명 중 많은 색. 슬라이더로 새 점을 옮겨 보세요. 어떤 이웃이 뽑히고, 투표 결과가 어떻게 바뀌는지 보여요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 새 점의 종류 = 가까운 k명의 다수결. 학습 대신 기억+거리.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — The k Knob</span>
+    <h2>k가 작으면 들쭉날쭉, 크면 뭉툭</h2>
+    <p class="lead">k는 <b>하이퍼파라미터</b>(사람이 고르는 값)예요. <b>k=1</b>이면 바로 옆 한 명만 따라 — 경계가 들쭉날쭉하고 잡음에 휘둘려요(고분산·과적합). <b>k가 크면</b> 멀리까지 평균 내 경계가 매끄러워지지만, 너무 크면 뭉툭해져 세부를 놓쳐요(과소적합). 슬라이더로 경계가 변하는 걸 보세요 — PART B의 복잡도 손잡이가 여기선 k예요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ k 작음=복잡(과적합), k 큼=단순(과소적합). k도 복잡도 손잡이.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Scale Trap</span>
+    <h2>"가깝다"는 단위에 휘둘린다</h2>
+    <p class="lead">kNN의 핵심은 거리예요. 그런데 한 축이 "나이(0~80)", 다른 축이 "연봉(0~1억)"이면? 거리를 재면 연봉 숫자가 너무 커서 <b>나이는 무시</b>돼 버려요 — 사실상 연봉 하나로만 판단하죠. 토글로 스케일 조정 전/후를 비교해 보세요. 축의 단위를 맞춰주면(스케일링) 두 특징이 공정하게 반영돼요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">📏 <b>특징 스케일링</b> — 거리를 쓰는 모델(kNN 등)에선 특징마다 범위가 다르면 큰 숫자의 축이 거리를 독점해요. 그래서 각 특징을 비슷한 범위로 맞춰줘요(예: 평균 0·폭 1). 이건 모델만큼 중요한 <b>데이터 준비</b>의 일부 — <b style="color:var(--v)">CH 14</b>에서 본격적으로 다뤄요.</div>
+    <p class="note" style="margin-top:6px">→ 단위가 다르면 큰 축이 거리를 독점. 스케일을 맞춰 공정하게.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">kNN = 가까운 k명의 다수결. 학습은 거의 없고(기억), 대신 예측할 때 거리를 재요. k는 복잡도 손잡이, 그리고 "가깝다"의 잣대(스케일)가 결과를 좌우하죠. 단순하지만 — 데이터가 많아지면 매번 모든 거리를 재느라 느려요. 그래서 <b>미리 규칙을 학습</b>해 두는 모델이 필요해요. 다음은 예/아니오 질문으로 영역을 자르는 결정트리.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="09-decision-tree.html" style="color:var(--q);font-weight:700">CH 09 · 결정트리 — 스무고개</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '08 · kNN — 이웃에게 묻기');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+const DATA=[{x:0.2,y:0.7,c:0},{x:0.3,y:0.55,c:0},{x:0.25,y:0.82,c:0},{x:0.4,y:0.68,c:0},{x:0.15,y:0.5,c:0},{x:0.42,y:0.5,c:0},{x:0.33,y:0.4,c:0},
+            {x:0.7,y:0.34,c:1},{x:0.8,y:0.46,c:1},{x:0.75,y:0.22,c:1},{x:0.62,y:0.36,c:1},{x:0.85,y:0.3,c:1},{x:0.58,y:0.55,c:1},{x:0.68,y:0.62,c:1}];
+function knn(px,py,k,data){ const ds=data.map(p=>({d:(p.x-px)**2+(p.y-py)**2,c:p.c,p})).sort((a,b)=>a.d-b.d).slice(0,k);
+  let v=[0,0]; ds.forEach(o=>v[o.c]++); return {cls: v[1]>v[0]?1:0, nn:ds, v}; }
+
+// ===== STEP 0: majority vote =====
+(function(){
+  let nx=0.5, ny=0.5, k=3;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<label>X <input type="range" id="slx" min="5" max="95" value="50"></label>`+
+                 `<label>Y <input type="range" id="sly" min="5" max="95" value="50"></label>`+
+                 `<label>k <input type="range" id="slk" min="1" max="7" step="2" value="3"> <span id="kv">3</span></label>`;
+  function render(){ const W=460,H=240; const P=ML.plane({x:70,y:18,w:330,h:200});
+    const res=knn(nx,ny,k,DATA);
+    let s=P.frame();
+    // links to nearest
+    res.nn.forEach(o=>{ const np=o.p;
+      s+=`<line x1="${P.px(nx).toFixed(1)}" y1="${P.py(ny).toFixed(1)}" x2="${P.px(np.x).toFixed(1)}" y2="${P.py(np.y).toFixed(1)}" stroke="${ML.clsCol(o.c)}" stroke-width="1.4" stroke-dasharray="3 2" opacity="0.7"/>`; });
+    DATA.forEach(p=>{ s+=`<circle cx="${P.px(p.x).toFixed(1)}" cy="${P.py(p.y).toFixed(1)}" r="5" fill="${ML.clsCol(p.c)}" opacity="0.9" stroke="var(--bg)" stroke-width="1"/>`; });
+    // query point
+    s+=`<circle cx="${P.px(nx).toFixed(1)}" cy="${P.py(ny).toFixed(1)}" r="8" fill="var(--panel)" stroke="${ML.clsCol(res.cls)}" stroke-width="2.4"/>`;
+    s+=`<text x="${P.px(nx).toFixed(1)}" y="${(P.py(ny)+4).toFixed(1)}" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="${ML.clsCol(res.cls)}">?</text>`;
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'다수결');
+    document.getElementById('kv').textContent=k;
+    document.getElementById('lab0').innerHTML=`가까운 <b>${k}명</b> 중 청록 <b style="color:${ML.C.cls[0]}">${res.v[0]}</b> · 앰버 <b style="color:${ML.C.cls[1]}">${res.v[1]}</b> → 다수결 결과 <b style="color:${ML.clsCol(res.cls)}">${res.cls===0?'청록':'앰버'}</b>. 점선이 뽑힌 이웃이에요.`;
+  }
+  document.getElementById('slx').oninput=e=>{nx=e.target.value/100;render();};
+  document.getElementById('sly').oninput=e=>{ny=e.target.value/100;render();};
+  document.getElementById('slk').oninput=e=>{k=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 1: k knob (boundary) =====
+(function(){
+  let k=1;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>k <input type="range" id="slk1" min="1" max="11" step="2" value="1"> <span id="kv1">1</span></label>`;
+  function render(){ const W=460,H=240;
+    let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=>knn(x,y,k,DATA).cls, pts:DATA, cols:24, rows:16, title:`k = ${k}`});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'k 손잡이');
+    document.getElementById('kv1').textContent=k;
+    document.getElementById('lab1').innerHTML= k===1
+      ? `<b style="color:${ML.C.dead}">k=1</b> — 경계가 들쭉날쭉, 외딴 점 하나에도 영역이 생겨요(과적합·고분산).`
+      : k>=9 ? `<b style="color:${ML.C.q}">k=${k}</b> — 너무 많이 평균 내 경계가 뭉툭해요. 세부를 놓치기 시작(과소적합).`
+      : `<b style="color:${ML.C.good}">k=${k}</b> — 적당히 매끄러운 경계. 잡음엔 둔하고 큰 구조는 잡아요.`;
+  }
+  document.getElementById('slk1').oninput=e=>{k=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 2: scale trap =====
+(function(){
+  let scaled=false;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<button class="btn" id="raw2">스케일 조정 전</button><button class="btn" id="sc2">조정 후</button>`;
+  // two features: age (0..1 displayed) and "income" with huge raw range -> dominates
+  // when not scaled, distance uses y multiplied by big factor
+  function knn2(px,py,k){ const f= scaled?1:9; // y dominates when not scaled
+    const ds=DATA.map(p=>({d:(p.x-px)**2+f*f*(p.y-py)**2,c:p.c})).sort((a,b)=>a.d-b.d).slice(0,k);
+    let v=[0,0]; ds.forEach(o=>v[o.c]++); return v[1]>v[0]?1:0; }
+  function render(){ const W=460,H=240;
+    let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=>knn2(x,y,3), pts:DATA, cols:24, rows:16, title: scaled?'스케일 맞춤 — 두 축 공정':'미조정 — 한 축이 거리 독점'});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'스케일');
+    document.getElementById('raw2').className='btn'+(!scaled?' active':'');
+    document.getElementById('sc2').className='btn'+(scaled?' active':'');
+    document.getElementById('lab2').innerHTML= scaled
+      ? `<b style="color:${ML.C.good}">조정 후</b> — 두 축을 비슷한 범위로 맞추니, 거리가 양쪽을 공정하게 반영해요. 경계가 자연스럽죠.`
+      : `<b style="color:${ML.C.dead}">조정 전</b> — 세로축(예: 연봉, 숫자가 큼)이 거리를 독점해 경계가 거의 <b>가로줄</b>이 됐어요. 가로축(나이)은 거의 무시돼요.`;
+  }
+  document.getElementById('raw2').onclick=()=>{scaled=false;render();};
+  document.getElementById('sc2').onclick=()=>{scaled=true;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">가까운 이웃의 다수결</text>`;
+  const rows=[['학습','거의 없음 — 데이터를 기억','var(--q)'],['k','복잡도 손잡이(작을수록 과적합)','var(--v)'],['주의','스케일·예측 속도','var(--dead)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='매번 거리 재기는 느려요 — 다음은 미리 규칙을 학습하는 결정트리.';
+})();
+</script>
+</body>
+</html>

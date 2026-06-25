@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11 · 정확도의 함정 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART D · 제대로 평가하기 — CH 11</div>
+    <h1>정확도의 함정</h1>
+    <p class="intro">"우리 모델은 정확도 99%!" — 멋져 보이죠. 하지만 1000명 중 진짜 환자가 10명뿐인 병을 진단한다면? <b>모두 "건강"이라고만 답해도</b> 정확도는 990/1000 = 99%예요. 환자는 한 명도 못 잡았는데! 이게 <b>정확도의 함정</b>이에요. 한 숫자로 뭉뚱그리면 어떤 종류의 실수를 하는지 가려져요. 그래서 예측을 <b>혼동행렬</b>이라는 2×2 표로 펼쳐 진짜 성적을 봐요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 99%의 거짓말</button>
+    <button data-s="1">01 · 혼동행렬</button>
+    <button data-s="2">02 · 네 칸의 의미</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — The 99% Lie</span>
+    <h2>다 "건강"이라 해도 99점</h2>
+    <p class="lead">희귀병 검사를 생각해 봐요. 슬라이더로 진짜 환자 비율을 바꿔 보세요. 환자가 드물수록 — "무조건 건강"이라고 외치는 게으른 모델의 <b>정확도</b>가 치솟아요. 하지만 그 모델은 정작 환자를 <b>0명</b> 잡아요. 높은 정확도가 곧 좋은 모델은 아니라는 걸 눈으로 확인하세요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 불균형 데이터에선 정확도가 거짓말을 해요. 다수만 맞혀도 고득점.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — The Confusion Matrix</span>
+    <h2>예측 × 실제, 2×2로 펼치기</h2>
+    <p class="lead">한 숫자 대신, 예측을 <b>실제 정답과 교차</b>시켜 표로 펼쳐요. 가로는 모델의 예측(양성/음성), 세로는 실제 정답. 그러면 네 칸이 생겨요 — 맞게 양성(TP)·맞게 음성(TN), 그리고 두 종류의 실수: 잘못 양성(FP)·놓친 양성(FN). 이 네 숫자가 모델의 진짜 행동을 보여줘요.</p>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 정답×예측 = 네 칸. 두 종류의 실수(FP·FN)가 따로 보여요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Meaning of Each Cell</span>
+    <h2>두 실수는 무게가 다르다</h2>
+    <p class="lead">FP(잘못 양성)와 FN(놓친 양성)은 <b>대가가 달라요</b>. 암 검진에서 FN(암을 놓침)은 치명적이고, 스팸 필터에서 FP(중요 메일을 스팸 처리)는 뼈아프죠. 각 칸을 짚어 의미와 현실의 비용을 보세요. 어떤 실수를 더 두려워하느냐에 따라 — 모델을 다르게 조율해야 해요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ FP와 FN의 비용은 상황마다 달라요. 한쪽을 줄이면 다른쪽이 늘죠.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">정확도 하나로는 속아요 — 특히 데이터가 불균형하거나 두 실수의 비용이 다를 때. 혼동행렬은 네 칸으로 진짜 행동을 드러내죠. 그런데 네 숫자는 한눈에 비교하기 번거로워요. 그래서 이걸 <b>두 개의 핵심 지표</b>로 요약해요 — 정밀도와 재현율. 그리고 CH 03에서 씨앗을 심은 <b>임계값</b>이 이 둘을 어떻게 줄다리기하는지, 다음 챕터에서.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="12-precision-recall.html" style="color:var(--q);font-weight:700">CH 12 · 정밀도와 재현율</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '11 · 정확도의 함정');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: the 99% lie =====
+(function(){
+  let rate=1; // % positives
+  const play=document.getElementById('play0');
+  play.innerHTML=`<label>진짜 양성 비율 <input type="range" id="sl0" min="1" max="50" value="1"> <span id="rv">1%</span></label>`;
+  function render(){ const W=460,H=200; const total=200; const pos=Math.round(total*rate/100), neg=total-pos;
+    // dots grid
+    let s=''; const cols=20, cw=(W-40)/cols, rh=7.0;
+    for(let i=0;i<total;i++){ const r=Math.floor(i/cols), c=i%cols; const isPos=i<pos;
+      s+=`<circle cx="${(24+c*cw).toFixed(1)}" cy="${(20+r*rh).toFixed(1)}" r="2.4" fill="${isPos?ML.C.hot:ML.C.slate}" opacity="${isPos?0.95:0.5}"/>`; }
+    const acc=neg/total*100;
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'불균형');
+    document.getElementById('rv').textContent=`${rate}%`;
+    document.getElementById('lab0').innerHTML=`양성 <b style="color:${ML.C.hot}">${pos}</b> · 음성 <b style="color:${ML.C.slate}">${neg}</b>. "무조건 음성" 모델의 정확도 = <b style="color:${acc>90?ML.C.dead:ML.C.good}">${acc.toFixed(1)}%</b> — 그런데 양성은 <b style="color:${ML.C.dead}">0명</b> 잡았어요. ${rate<=5?'정확도가 높을수록 더 위험한 거짓말이죠.':'양성이 흔해지면 이 속임수가 안 통해요.'}`;
+  }
+  document.getElementById('sl0').oninput=e=>{rate=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 1: confusion matrix =====
+(function(){ const W=460,H=210;
+  let s=ML.confusion(150,30,{tp:38,fn:12,fp:18,tn:132,cell:72});
+  document.getElementById('s1').innerHTML=ML.svg(W,H,s,'혼동행렬');
+  document.getElementById('lab1').innerHTML=`대각선(<b style="color:${ML.C.good}">TP·TN</b>)이 맞힌 것, 나머지(<b style="color:${ML.C.dead}">FP·FN</b>)가 두 종류의 실수예요. 정확도 = 대각선 합 ÷ 전체 = (38+132)/200 = 85%. 하지만 칸을 따로 봐야 진짜가 보여요.`;
+})();
+
+// ===== STEP 2: meaning of each cell =====
+(function(){
+  let sel=0;
+  const cells=[
+    ['TP','맞게 양성','환자를 환자로 — 정답!','var(--good)'],
+    ['FN','놓친 양성','환자인데 "건강"이라 함 — 암 검진에선 치명적','var(--dead)'],
+    ['FP','잘못 양성','건강한데 "환자"라 함 — 불필요한 공포·비용','var(--dead)'],
+    ['TN','맞게 음성','건강을 건강으로 — 정답!','var(--good)'],
+  ];
+  const play=document.getElementById('play2');
+  play.innerHTML=cells.map((c,i)=>`<button class="btn" id="c${i}">${c[0]}</button>`).join('');
+  function render(){ const W=460,H=210;
+    const vals={tp:38,fn:12,fp:18,tn:132};
+    let s=ML.confusion(150,30,{...vals,cell:72});
+    // highlight selected cell with a ring
+    const pos=[[150,30],[150+72,30],[150,30+72],[150+72,30+72]]; // tp,fn,fp,tn order matches engine data layout
+    const p=pos[sel];
+    s+=`<rect x="${p[0]-2}" y="${p[1]-2}" width="${72-2}" height="${72-2}" rx="6" fill="none" stroke="${ML.C.hot}" stroke-width="3"/>`;
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'네 칸');
+    cells.forEach((c,i)=>document.getElementById('c'+i).className='btn'+(sel===i?' active':''));
+    const c=cells[sel];
+    document.getElementById('lab2').innerHTML=`<b style="color:${c[3]}">${c[0]} · ${c[1]}</b> — ${c[2]}`;
+  }
+  cells.forEach((c,i)=>document.getElementById('c'+i).onclick=()=>{sel=i;render();});
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">정확도 하나로는 속는다</text>`;
+  const rows=[['함정','불균형이면 다수만 맞혀도 고득점','var(--dead)'],['혼동행렬','TP·FP·FN·TN 네 칸','var(--q)'],['실수','FP와 FN은 비용이 다름','var(--v)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='네 칸을 두 지표로 요약 — 다음, 정밀도와 재현율(그리고 임계값).';
+})();
+</script>
+</body>
+</html>

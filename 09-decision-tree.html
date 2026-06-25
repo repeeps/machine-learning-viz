@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>09 · 결정트리 — 스무고개 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART C · 모델 동물원 (기둥) — CH 09</div>
+    <h1>결정트리 — 스무고개</h1>
+    <p class="intro">스무고개를 떠올려 보세요 — "예/아니오" 질문을 거듭하며 답을 좁혀가죠. <b>결정트리</b>가 딱 그래요. "넓이가 30평 이상?" → 예면 오른쪽, 아니오면 왼쪽 → 다음 질문… 이렇게 데이터를 점점 작은 무리로 <b>쪼개요</b>. 각 질문은 평면을 가로·세로로 한 번씩 자르고, 끝에 다다른 칸(잎)의 다수 색이 예측이에요. 사람이 읽을 수 있는 규칙이 나온다는 게 큰 장점이죠.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 질문의 사슬</button>
+    <button data-s="1">01 · 영역을 자르다</button>
+    <button data-s="2">02 · 깊이 손잡이</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — A Chain of Questions</span>
+    <h2>예/아니오로 좁혀간다</h2>
+    <p class="lead">트리는 맨 위(뿌리)에서 질문을 시작해, 답에 따라 가지를 타고 내려가요. 버튼으로 한 입력을 따라가 보세요 — 질문 하나하나가 후보를 절반씩 줄이고, 잎에 도착하면 그 칸의 다수 색이 답이에요. 규칙이 그대로 글로 읽혀요: "넓이 크고 + 역세권이면 → 비쌈".</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 뿌리→가지→잎. 질문 사슬이 곧 사람이 읽는 규칙.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — Slicing the Plane</span>
+    <h2>질문 하나 = 칼질 하나</h2>
+    <p class="lead">각 질문은 "이 특징이 어떤 값 이상?"이라 — 평면을 <b>곧은 가로·세로 선</b>으로 잘라요. 그래서 트리의 경계는 늘 <b>계단처럼 각져요</b>(kNN의 매끈한 경계와 대조적). 질문을 하나씩 추가하며 평면이 직사각형 칸들로 쪼개지는 걸 보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 가로·세로 칼질만 — 트리 경계는 늘 계단 모양(축에 평행).</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The Depth Knob</span>
+    <h2>너무 깊으면 잎마다 점 하나</h2>
+    <p class="lead">트리의 복잡도 손잡이는 <b>깊이</b>(질문을 몇 번 거듭할지)예요. 얕으면 칸이 크고 거칠어요(과소적합). 너무 깊으면 — 잎마다 점 하나씩 들어갈 때까지 쪼개, 잡음까지 외워요(과적합). 슬라이더로 깊이를 키우며 칸이 잘게 부서지는 걸 보세요. 적당한 깊이에서 멈춰야(가지치기) 해요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 깊이 = 복잡도. 너무 깊으면 잎=점 하나 = 과적합. 가지치기로 멈춤.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">결정트리 = 예/아니오 질문으로 평면을 직사각형 칸으로 쪼개기. 읽기 쉽고 빠르지만 — 깊은 트리 하나는 잡음에 약하고(고분산), 데이터가 조금만 바뀌어도 트리 모양이 통째로 변해요. 그렇다면? <b>나무 한 그루 대신 숲</b>을 쓰면 돼요. 여러 트리의 의견을 모으면 훨씬 강해지죠 — 앙상블, 다음 챕터.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="10-ensemble.html" style="color:var(--q);font-weight:700">CH 10 · 앙상블 — 여럿이 모이면</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '09 · 결정트리 — 스무고개');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: chain of questions (tree diagram + path) =====
+(function(){
+  // path選: 0=작은넓이,1=큰넓이+비역세,2=큰넓이+역세
+  let leaf=2;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="p0a">넓이 작음</button><button class="btn" id="p0b">큼+비역세</button><button class="btn" id="p0c">큼+역세권</button>`;
+  function render(){ const W=460,H=210;
+    const nodes=[
+      {id:'r',x:230,y:34,label:'넓이≥30?'},
+      {id:'l1',x:120,y:110,label:'저렴',leaf:true,cls:0},
+      {id:'r1',x:330,y:110,label:'역세권?'},
+      {id:'l2',x:250,y:178,label:'보통',leaf:true,cls:0},
+      {id:'l3',x:410,y:178,label:'비쌈',leaf:true,cls:1},
+    ];
+    const edges=[['r','l1','아니오'],['r','r1','예'],['r1','l2','아니오'],['r1','l3','예']];
+    // highlight path
+    const pathNodes = leaf===0?['r','l1']: leaf===1?['r','r1','l2']:['r','r1','l3'];
+    let inner=ML.tree({nodes,edges});
+    // overlay highlight ring on path leaves
+    const target = leaf===0?nodes[1]: leaf===1?nodes[3]:nodes[4];
+    inner+=`<circle cx="${target.x}" cy="${target.y}" r="22" fill="none" stroke="${ML.C.hot}" stroke-width="2" stroke-dasharray="3 3"/>`;
+    document.getElementById('s0').innerHTML=ML.svg(W,H,inner,'질문 사슬');
+    ['p0a','p0b','p0c'].forEach((id,i)=>document.getElementById(id).className='btn'+(leaf===i?' active':''));
+    const msg=[
+      '넓이 < 30평 → 첫 질문에서 바로 <b style="color:'+ML.C.cls[0]+'">저렴</b> 잎으로. 질문 한 번이면 끝.',
+      '넓이 ≥ 30평 → "역세권?" 아니오 → <b style="color:'+ML.C.cls[0]+'">보통</b>. 질문 두 번.',
+      '넓이 ≥ 30평 → "역세권?" 예 → <b style="color:'+ML.C.cls[1]+'">비쌈</b>. 규칙: 넓고 역세권이면 비쌈.'
+    ];
+    document.getElementById('lab0').innerHTML=msg[leaf];
+  }
+  document.getElementById('p0a').onclick=()=>{leaf=0;render();};
+  document.getElementById('p0b').onclick=()=>{leaf=1;render();};
+  document.getElementById('p0c').onclick=()=>{leaf=2;render();};
+  render();
+})();
+
+const DATA=[{x:0.16,y:0.35,c:0},{x:0.2,y:0.62,c:0},{x:0.28,y:0.8,c:0},{x:0.36,y:0.5,c:0},{x:0.22,y:0.25,c:0},
+            {x:0.62,y:0.72,c:0},{x:0.76,y:0.83,c:0},{x:0.85,y:0.66,c:0},
+            {x:0.6,y:0.32,c:1},{x:0.72,y:0.4,c:1},{x:0.8,y:0.27,c:1},{x:0.67,y:0.2,c:1},{x:0.72,y:0.5,c:1},
+            {x:0.93,y:0.13,c:0}];
+
+// ===== STEP 1: slicing the plane =====
+(function(){
+  let nq=1;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="less1">질문 −</button><button class="btn" id="more1">질문 추가 ▶</button><span class="note" id="cnt1" style="margin-left:8px"></span>`;
+  // hierarchical axis splits
+  function region(x,y){
+    if(x<0.5) return 0;                       // q1: 왼쪽 띠 -> class0
+    if(nq>=2 && y>0.55) return 0;             // q2: 오른쪽 위 -> class0
+    if(nq>=3 && x>0.85 && y<0.25) return 0;   // q3: 오른쪽 아래 구석 이상치 -> class0
+    return 1;                                  // 나머지 오른쪽 아래 -> class1
+  }
+  function cuts(){ let s=''; const P=ML.plane({x:70,y:18,w:330,h:200});
+    // q1: 세로 x=0.5
+    s+=`<line x1="${P.px(0.5)}" y1="${P.py(0)}" x2="${P.px(0.5)}" y2="${P.py(1)}" stroke="${ML.C.v}" stroke-width="2"/>`;
+    // q2: 오른쪽 가로 y=0.55
+    if(nq>=2) s+=`<line x1="${P.px(0.5)}" y1="${P.py(0.55)}" x2="${P.px(1)}" y2="${P.py(0.55)}" stroke="${ML.C.v}" stroke-width="2"/>`;
+    // q3: 오른쪽 아래 구석 세로 x=0.85 (아래 절반만)
+    if(nq>=3) s+=`<line x1="${P.px(0.85)}" y1="${P.py(0)}" x2="${P.px(0.85)}" y2="${P.py(0.25)}" stroke="${ML.C.v}" stroke-width="2"/>`;
+    return s;
+  }
+  function render(){ const W=460,H=240;
+    let s=ML.boundary(70,18,330,200,{regionFn:region, pts:DATA, cols:24, rows:16, title:`질문 ${nq}개 — 가로·세로 칼질`});
+    s+=cuts();
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'영역 자르기');
+    document.getElementById('cnt1').textContent=`질문 ${nq}개`;
+    document.getElementById('lab1').innerHTML=`질문 <b>${nq}개</b> → 평면이 <b>${nq+1}칸</b>으로. 모든 칼질이 가로 또는 세로 직선이라, 경계가 <b>계단 모양</b>이에요(곡선이 안 됨).`;
+  }
+  document.getElementById('more1').onclick=()=>{nq=Math.min(3,nq+1);render();};
+  document.getElementById('less1').onclick=()=>{nq=Math.max(1,nq-1);render();};
+  render();
+})();
+
+// ===== STEP 2: depth knob =====
+(function(){
+  let depth=1;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>깊이 <input type="range" id="sl2" min="1" max="6" value="1"> <span id="dv">1</span></label>`;
+  // greedy-ish recursive split simulation by depth (axis-aligned), deterministic
+  function build(pts,d,xlo,xhi,ylo,yhi){
+    if(d===0||pts.length<=1){ let v=[0,0]; pts.forEach(p=>v[p.c]++); return {leaf:true,cls:v[1]>v[0]?1:(v[0]>v[1]?0:0),xlo,xhi,ylo,yhi}; }
+    // choose best axis split (minimize impurity) among candidates
+    let best=null;
+    const tryAxis=(axis)=>{ const vals=pts.map(p=>axis==='x'?p.x:p.y).sort((a,b)=>a-b);
+      for(let i=0;i<vals.length-1;i++){ const t=(vals[i]+vals[i+1])/2;
+        const L=pts.filter(p=>(axis==='x'?p.x:p.y)<=t), Rr=pts.filter(p=>(axis==='x'?p.x:p.y)>t);
+        if(!L.length||!Rr.length)continue;
+        const imp=arr=>{let v=[0,0];arr.forEach(p=>v[p.c]++);const n=arr.length;const p0=v[0]/n;return n*(1-p0*p0-(1-p0)*(1-p0));};
+        const score=imp(L)+imp(Rr);
+        if(!best||score<best.score) best={axis,t,L,Rr,score};
+      } };
+    tryAxis('x'); tryAxis('y');
+    if(!best){ let v=[0,0]; pts.forEach(p=>v[p.c]++); return {leaf:true,cls:v[1]>v[0]?1:0,xlo,xhi,ylo,yhi}; }
+    if(best.axis==='x') return {leaf:false,axis:'x',t:best.t,
+      lo:build(best.L,d-1,xlo,best.t,ylo,yhi), hi:build(best.Rr,d-1,best.t,xhi,ylo,yhi)};
+    return {leaf:false,axis:'y',t:best.t,
+      lo:build(best.L,d-1,xlo,xhi,ylo,best.t), hi:build(best.Rr,d-1,xlo,xhi,best.t,yhi)};
+  }
+  function classify(node,x,y){ while(!node.leaf){ const v=node.axis==='x'?x:y; node=v<=node.t?node.lo:node.hi; } return node.cls; }
+  function render(){ const W=460,H=240; const tree=build(DATA,depth,0,1,0,1);
+    let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=>classify(tree,x,y), pts:DATA, cols:26, rows:18, title:`깊이 ${depth}`});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'깊이 손잡이');
+    document.getElementById('dv').textContent=depth;
+    document.getElementById('lab2').innerHTML= depth<=1
+      ? `<b style="color:${ML.C.q}">얕은 트리(깊이 ${depth})</b> — 칸이 커서 거칠어요. 큰 흐름만 잡고 세부는 놓침(과소적합).`
+      : depth>=5 ? `<b style="color:${ML.C.dead}">깊은 트리(깊이 ${depth})</b> — 칸이 잘게 부서져 점 하나까지 감싸요. 잡음을 외운 과적합 상태.`
+      : `<b style="color:${ML.C.good}">깊이 ${depth}</b> — 적당히 나뉜 칸들. 두 무리를 무리 없이 가르죠.`;
+  }
+  document.getElementById('sl2').oninput=e=>{depth=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">예/아니오로 영역 쪼개기</text>`;
+  const rows=[['장점','읽기 쉬운 규칙 · 빠름','var(--good)'],['경계','가로·세로 계단 모양','var(--q)'],['약점','깊으면 과적합 · 불안정','var(--dead)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='나무 한 그루는 불안정 — 다음은 여러 그루를 모은 숲(앙상블).';
+})();
+</script>
+</body>
+</html>

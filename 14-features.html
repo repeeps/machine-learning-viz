@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14 · 특징이 절반 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--good)">PART E · 현실과 종합 — CH 14</div>
+    <h1>특징이 절반</h1>
+    <p class="intro">실무자들이 입을 모아 하는 말이 있어요 — "<b>모델보다 특징</b>". 아무리 좋은 알고리즘도 입력이 엉망이면 못 배우고, 평범한 알고리즘도 <b>좋은 특징</b>만 있으면 잘 풀어요. 쓰레기를 넣으면 쓰레기가 나오죠(garbage in, garbage out). 이 챕터에선 데이터 준비의 두 핵심을 봐요 — 축의 단위를 맞추는 <b>스케일링</b>, 그리고 없던 특징을 만들어내는 <b>특징 공학</b>. 종종 이게 모델 선택보다 큰 차이를 내요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 입력이 절반</button>
+    <button data-s="1">01 · 스케일링</button>
+    <button data-s="2">02 · 특징 만들기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--good)">Step 00 — Input Is Half the Battle</span>
+    <h2>같은 모델, 다른 특징, 다른 운명</h2>
+    <p class="lead">똑같은 데이터를 두고 — 왼쪽은 <b>날것의 특징</b>, 오른쪽은 <b>잘 다듬은 특징</b>으로 같은 모델을 돌려요. 결과 차이가 극적이죠. 모델을 바꾼 게 아니라 <b>입력만</b> 바꿨는데요. 그래서 많은 프로젝트에서 시간의 절반 이상이 데이터·특징 준비에 들어가요.</p>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 모델은 그대로, 특징만 바꿔도 성패가 갈려요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Scaling</span>
+    <h2>축의 단위를 맞춘다</h2>
+    <p class="lead">CH 08에서 봤듯, 한 축이 0~1이고 다른 축이 0~10000이면 큰 축이 모든 걸 지배해요. <b>스케일링</b>은 각 특징을 비슷한 범위로 옮겨요 — 흔히 "평균 0, 폭 1"로. 그러면 모든 특징이 <b>공정하게</b> 목소리를 내죠. 토글로 스케일링 전후의 점 분포를 보세요. 모양(상대 위치)은 같지만 축의 스케일이 통일돼요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 평균 0·폭 1로 — 모든 특징이 같은 무게로 반영돼요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Feature Engineering</span>
+    <h2>없던 특징을 만들어낸다</h2>
+    <p class="lead">가운데 무리를 바깥 무리가 둘러싼 데이터 — 직선으론 도저히 못 가르죠(왼쪽). 그런데 "중심에서의 거리"라는 <b>새 특징 하나</b>를 만들면? 안쪽은 거리가 작고 바깥은 크니, 그 축에선 <b>직선 하나로 깔끔히</b> 갈려요(오른쪽). 복잡한 모델 없이, 똑똑한 특징 하나가 문제를 풀어버린 거예요. ▶로 변환을 보세요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 좋은 특징 하나가 복잡한 모델보다 나을 때가 많아요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">특징은 모델만큼, 때로는 그 이상으로 중요해요 — 스케일을 맞추고(공정함), 도메인 지식으로 새 특징을 빚으면(특징 공학) 평범한 모델도 빛나요. 자, 이제 흩어져 있던 모든 조각을 모을 시간이에요. 데이터 → 특징 → 모델 → 학습 → 평가 → 예측 — 이 한 흐름이 어떻게 이어지는지 다음 챕터에서 통째로 봐요.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="15-pipeline.html" style="color:var(--q);font-weight:700">CH 15 · 한 흐름 종합</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '14 · 특징이 절반');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// circular data: inner class1, outer class0
+const RING=(function(){ const R=ML.rng(9); const arr=[];
+  for(let i=0;i<10;i++){ const a=R()*6.28, r=0.08+R()*0.12; arr.push({x:0.5+r*Math.cos(a),y:0.5+r*Math.sin(a),c:1}); }
+  for(let i=0;i<14;i++){ const a=R()*6.28, r=0.28+R()*0.12; arr.push({x:0.5+r*Math.cos(a),y:0.5+r*Math.sin(a),c:0}); }
+  return arr; })();
+
+// ===== STEP 0: input is half =====
+(function(){ const W=460,H=240; let s='';
+  // left: raw features — several straight lines, all fail on ring data
+  const P=ML.plane({x:28,y:22,w:200,h:196}); s+=P.frame();
+  s+=`<text x="128" y="16" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">날것 특징 — 어떤 직선도 실패</text>`;
+  [{m:0,b:0.5},{m:1,b:0.04},{m:-0.85,b:0.88}].forEach(ln=>{ s+=`<line x1="${P.px(0)}" y1="${P.py(VZ.clamp(ln.b,0,1)).toFixed(1)}" x2="${P.px(1)}" y2="${P.py(VZ.clamp(ln.m+ln.b,0,1)).toFixed(1)}" stroke="${ML.C.dead}" stroke-width="1.6" opacity="0.65"/>`; });
+  RING.forEach(p=>s+=`<circle cx="${P.px(p.x).toFixed(1)}" cy="${P.py(p.y).toFixed(1)}" r="3.6" fill="${ML.clsCol(p.c)}" stroke="var(--bg)" stroke-width="1"/>`);
+  // right: engineered feature -> clean circular boundary, same model
+  s+=ML.boundary(252,22,200,196,{regionFn:(x,y)=>{const d=Math.hypot(x-0.5,y-0.5);return d<0.22?1:0;}, pts:RING, cols:14, rows:12, title:'다듬은 특징 + 같은 모델'});
+  document.getElementById('s0').innerHTML=ML.svg(W,H,s,'입력이 절반');
+  document.getElementById('lab0').innerHTML=`<b style="color:${ML.C.dead}">왼쪽</b> — 직선을 어떻게 그어도(빨간 선 셋 모두) 안쪽·바깥 고리를 못 갈라요. 직선의 <b>근본적 한계</b>죠. <b style="color:${ML.C.good}">오른쪽</b> — 특징을 다듬으니 같은 종류 모델이 깔끔히 풀어요. 차이는 <b>입력</b>뿐.`;
+})();
+
+// ===== STEP 1: scaling =====
+(function(){
+  let scaled=false;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="raw1">스케일 전</button><button class="btn" id="sc1">스케일 후</button>`;
+  // feature A small range, feature B large range
+  const R=ML.rng(3); const raw=[];
+  for(let i=0;i<16;i++){ raw.push({a:0.3+R()*0.4, b:0.1+R()*0.85, c:R()<0.5?0:1}); }
+  // feature stats for standardization (map each feature to mean 0.5, equal spread)
+  const mean=k=>raw.reduce((s,p)=>s+p[k],0)/raw.length;
+  const mA=mean('a'), mB=mean('b');
+  const rng2=(k,m)=>Math.max(...raw.map(p=>Math.abs(p[k]-m)))||1;
+  const rA=rng2('a',mA), rB=rng2('b',mB);
+  function render(){ const W=460,H=240; const P=ML.plane({x:70,y:18,w:330,h:200}); let s=P.frame();
+    s+=`<text x="235" y="12" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">${scaled?'스케일 후 — 두 축 폭 통일':'스케일 전 — 세로축 범위가 큼'}</text>`;
+    raw.forEach(p=>{ let ax, ay;
+      if(!scaled){ ax=0.5+(p.a-0.5)*0.3; ay=p.b; } // raw: 가로축(A) 좁게 눌림, 세로축(B) 넓음
+      else { ax=0.5+(p.a-mA)/rA*0.4; ay=0.5+(p.b-mB)/rB*0.4; } // 둘 다 평균 0.5·폭 동일
+      s+=`<circle cx="${P.px(ax).toFixed(1)}" cy="${P.py(ay).toFixed(1)}" r="5" fill="${ML.clsCol(p.c)}" opacity="0.9" stroke="var(--bg)" stroke-width="1"/>`; });
+    s+=`<text x="${P.px(0.5)}" y="${P.py(0)+16}" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">특징 A (좁은 범위)</text>`;
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'스케일링');
+    document.getElementById('raw1').className='btn'+(!scaled?' active':'');
+    document.getElementById('sc1').className='btn'+(scaled?' active':'');
+    document.getElementById('lab1').innerHTML= scaled
+      ? `<b style="color:${ML.C.good}">스케일 후</b> — 두 축이 비슷한 폭(평균 0·폭 1)이라 점들이 골고루 퍼졌어요. 거리·경사 계산이 두 특징을 공정하게 봐요.`
+      : `<b style="color:${ML.C.dead}">스케일 전</b> — 가로축(특징 A) 범위가 좁아 점들이 세로로 눌려 있어요. 모델이 세로축(B)에만 휘둘리기 쉽죠.`;
+  }
+  document.getElementById('raw1').onclick=()=>{scaled=false;render();};
+  document.getElementById('sc1').onclick=()=>{scaled=true;render();};
+  render();
+})();
+
+// ===== STEP 2: feature engineering =====
+(function(){
+  let transformed=false;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<button class="btn" id="t2">중심 거리 특징 만들기 ▶</button><button class="btn" id="r2">원래대로</button>`;
+  function render(){ const W=460,H=240;
+    if(!transformed){
+      let s=ML.boundary(70,18,330,200,{regionFn:(x,y)=>{const d=Math.hypot(x-0.5,y-0.5);return d<0.22?1:0;}, pts:RING, cols:18, rows:13, title:'원래 두 특징 (x, y) — 직선으론 불가'});
+      document.getElementById('s2').innerHTML=ML.svg(W,H,s,'원래');
+      document.getElementById('lab2').innerHTML=`안쪽 <b style="color:${ML.C.cls[1]}">앰버</b>를 바깥 <b style="color:${ML.C.cls[0]}">청록</b>이 둘러싼 모양 — (x,y) 평면에선 직선 하나로 절대 못 갈라요.`;
+    } else {
+      // transformed axis: distance from center (1D) -> separable by a line
+      let s=''; const P=ML.plane({x:70,y:18,w:330,h:200}); s+=P.frame();
+      s+=`<text x="235" y="12" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">새 특징 = 중심에서의 거리 → 한 축에 펼침</text>`;
+      RING.forEach((p,i)=>{ const d=Math.hypot(p.x-0.5,p.y-0.5); const nx=VZ.clamp(d/0.42,0,1); const ny=0.2+(i%7)/7*0.6;
+        s+=`<circle cx="${P.px(nx).toFixed(1)}" cy="${P.py(ny).toFixed(1)}" r="5" fill="${ML.clsCol(p.c)}" opacity="0.9" stroke="var(--bg)" stroke-width="1"/>`; });
+      const tx=P.px(0.52);
+      s+=`<line x1="${tx}" y1="${P.py(0)}" x2="${tx}" y2="${P.py(1)}" stroke="${ML.C.v}" stroke-width="2.4"/>`;
+      s+=`<text x="${P.px(0.5)}" y="${P.py(0)+16}" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">중심에서의 거리 →</text>`;
+      document.getElementById('s2').innerHTML=ML.svg(W,H,s,'변환');
+      document.getElementById('lab2').innerHTML=`"중심 거리"라는 <b style="color:${ML.C.v}">새 특징 하나</b>를 만드니 — 안쪽(거리 작음)과 바깥(거리 큼)이 한 축에서 갈려, <b>직선(보라) 하나</b>로 깔끔히 분류돼요!`;
+    }
+    document.getElementById('t2').className='btn'+(transformed?' active':'');
+    document.getElementById('r2').className='btn'+(!transformed?' active':'');
+  }
+  document.getElementById('t2').onclick=()=>{transformed=true;render();};
+  document.getElementById('r2').onclick=()=>{transformed=false;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">모델보다 특징</text>`;
+  const rows=[['GIGO','쓰레기 넣으면 쓰레기 나옴','var(--dead)'],['스케일링','축 단위 통일 → 공정','var(--q)'],['특징 공학','새 특징이 문제를 풀기도','var(--v)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='조각이 다 모였어요 — 다음은 전체를 한 흐름으로 꿰는 종합.';
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>03 · 분류 — 경계를 긋다 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(192,132,252,.08);border:1px solid var(--v);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--v)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART A · 무엇을 배우나 — CH 03</div>
+    <h1>분류 — 경계를 긋다</h1>
+    <p class="intro">라벨이 숫자가 아니라 <b>범주</b>(개/고양이, 스팸/정상, 합격/불합격)일 때가 <b>분류</b>예요. 회귀가 점을 지나는 선을 찾았다면, 분류는 서로 다른 무리를 <b>가르는 경계</b>를 찾아요. 경계 한쪽이면 이 종류, 다른 쪽이면 저 종류. 경계는 곧은 직선일 수도, 구불구불한 곡선일 수도 있어요 — 그리고 "딱 잘라" 나누는 대신 <b>확률</b>로 부드럽게 표현할 수도 있죠.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 경계</button>
+    <button data-s="1">01 · 직선 vs 곡선</button>
+    <button data-s="2">02 · 확률로 부드럽게</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — A Boundary</span>
+    <h2>두 무리를 가르는 선</h2>
+    <p class="lead">색이 다른 두 무리의 점이 있어요(<b style="color:var(--q)">청록</b>·<b style="color:var(--hot)">앰버</b>). 분류기는 둘 사이에 <b>경계</b>를 그어, 평면을 두 영역으로 나눠요. 새 점이 들어오면 — 어느 영역에 떨어지는지로 종류를 정하죠. 배경의 옅은 색이 "이 자리는 이 종류로 본다"는 모델의 판단이에요.</p>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 경계로 평면을 나눠, 새 점이 떨어진 영역의 색이 곧 예측.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — Straight vs Curved</span>
+    <h2>곧게 vs 구불구불</h2>
+    <p class="lead">어떤 데이터는 직선 하나로 깔끔히 갈려요. 하지만 무리가 서로 휘감겨 있으면 직선으론 부족하죠 — 곡선 경계가 필요해요. 토글로 두 데이터와 두 경계를 비교해 보세요. 더 복잡한 경계가 항상 좋은 건 아니에요(과적합, PART B) — 지금은 "경계 모양이 다양하다"만.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 경계는 직선일 수도 곡선일 수도. 데이터 모양에 맞춰 휘어요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Soft Probabilities</span>
+    <h2>딱 자르지 말고, 확률로</h2>
+    <p class="lead">경계 바로 옆 점은 애매하죠. 그래서 많은 분류기는 "이건 100% 앰버"가 아니라 "<b>78% 앰버</b>"처럼 <b>확률</b>로 답해요. 경계에서 멀수록 확신이 커지고, 경계 위에선 딱 50:50. 슬라이더로 <b>임계값</b>(몇 % 넘으면 앰버로 볼지)을 바꿔 보세요 — 경계가 통째로 움직여요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">🏷️ <b>"로지스틱 회귀"의 이름 해명</b> — 가장 흔한 분류기 이름에 "회귀"가 붙은 게 헷갈려요. 사실 이건 <b>확률(0~1 숫자)을 회귀로 예측</b>한 뒤, <b>임계값으로 잘라 분류</b>하는 거예요. 그래서 속은 회귀, 쓰임은 분류. 이 <b>임계값</b>을 어디 두느냐가 성능을 좌우하는데 — 그 줄다리기는 <b>CH 12</b>에서 본격적으로 다뤄요.</div>
+    <p class="note" style="margin-top:6px">→ 확률로 답하고, 임계값으로 자른다. 임계값 위치 = CH 12의 핵심.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">분류 = 범주를 가르는 <b>경계</b> 찾기. 직선·곡선 어느 쪽이든, 부드러운 확률로 표현하든 — 핵심은 "어느 영역인가"예요. 여기까지가 PART A: <b>회귀(선)</b>와 <b>분류(경계)</b>라는 두 기본기. 이제 진짜 어려운 질문으로 — 훈련 데이터에 잘 맞추는 게 정말 "배운" 걸까요? 외운 것과 배운 것의 차이가 PART B예요.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="04-generalize.html" style="color:var(--q);font-weight:700">CH 04 · 학습 vs 암기</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '03 · 분류 — 경계를 긋다');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+const LIN=[{x:0.2,y:0.7,c:0},{x:0.3,y:0.55,c:0},{x:0.25,y:0.82,c:0},{x:0.4,y:0.66,c:0},{x:0.18,y:0.5,c:0},
+           {x:0.7,y:0.34,c:1},{x:0.8,y:0.46,c:1},{x:0.75,y:0.22,c:1},{x:0.62,y:0.36,c:1},{x:0.85,y:0.3,c:1}];
+
+// ===== STEP 0: a boundary =====
+(function(){ const W=460,H=240;
+  let s=ML.boundary(70,18,330,200,{regionFn:(nx,ny)=> (nx+(1-ny))/2>0.52?1:0, pts:LIN, cols:18, rows:12, title:'경계가 평면을 두 영역으로'});
+  document.getElementById('s0').innerHTML=ML.svg(W,H,s,'경계');
+  document.getElementById('lab0').innerHTML=`옅은 <b style="color:${ML.C.cls[0]}">청록</b> 영역은 "여기 오면 청록", <b style="color:${ML.C.cls[1]}">앰버</b> 영역은 "여기 오면 앰버". 경계는 둘이 만나는 선이에요.`;
+})();
+
+// ===== STEP 1: straight vs curved =====
+(function(){
+  let mode=0;
+  const SPIRAL=[{x:0.5,y:0.85,c:0},{x:0.3,y:0.7,c:0},{x:0.25,y:0.45,c:0},{x:0.4,y:0.25,c:0},{x:0.62,y:0.2,c:0},
+                {x:0.5,y:0.55,c:1},{x:0.45,y:0.4,c:1},{x:0.6,y:0.45,c:1},{x:0.7,y:0.6,c:1},{x:0.55,y:0.72,c:1}];
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="m0">직선 경계</button><button class="btn" id="m1">곡선 경계</button>`;
+  function render(){ const W=460,H=240; let s='';
+    if(mode===0){ s=ML.boundary(70,18,330,200,{regionFn:(nx,ny)=>(nx+(1-ny))/2>0.52?1:0, pts:LIN, cols:18, rows:12, title:'직선으로 깔끔히 갈리는 데이터'}); }
+    else { s=ML.boundary(70,18,330,200,{regionFn:(nx,ny)=>{const dx=nx-0.5,dy=ny-0.52;return (dx*dx+dy*dy)<0.045?1:0;}, pts:SPIRAL, cols:18, rows:12, title:'곡선(원형) 경계가 필요한 데이터'}); }
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'직선 vs 곡선');
+    document.getElementById('m0').className='btn'+(mode===0?' active':'');
+    document.getElementById('m1').className='btn'+(mode===1?' active':'');
+    document.getElementById('lab1').innerHTML= mode===0
+      ? `두 무리가 한쪽씩 모여 있으면 <b>직선</b> 하나로 충분해요. 단순한 경계가 오히려 안정적이죠.`
+      : `한 무리가 다른 무리를 <b>감싸고</b> 있으면 직선으론 못 갈라요 — <b>곡선</b> 경계가 필요해요. 단, 너무 휘면 잡음까지 외워요(→ PART B).`;
+  }
+  document.getElementById('m0').onclick=()=>{mode=0;render();};
+  document.getElementById('m1').onclick=()=>{mode=1;render();};
+  render();
+})();
+
+// ===== STEP 2: probabilities + threshold =====
+(function(){
+  let thr=0.5;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>임계값 <input type="range" id="slt" min="20" max="80" value="50"> <span id="tv">50%</span></label>`;
+  // logistic-ish probability of class1 along a diagonal score
+  const score=(nx,ny)=> (nx+(1-ny))/2; // 0..1
+  const sig=(z)=>1/(1+Math.exp(-12*(z-0.52)));
+  function render(){ const W=460,H=240;
+    // region: prob>=thr -> class1
+    let s=ML.boundary(70,18,330,200,{regionFn:(nx,ny)=> sig(score(nx,ny))>=thr?1:0, pts:LIN, cols:20, rows:13, title:`임계값 ${(thr*100)|0}% — 경계가 통째로 이동`});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'확률·임계값');
+    document.getElementById('tv').textContent=`${(thr*100)|0}%`;
+    document.getElementById('lab2').innerHTML= `임계값을 <b style="color:${ML.C.hot}">${(thr*100)|0}%</b>로 두면 — "앰버일 확률이 ${(thr*100)|0}% 이상일 때만 앰버로 본다"는 뜻. 값을 올리면 앰버 영역이 줄고(더 깐깐), 내리면 늘어요(더 관대). 이 직선 경계에선 통째로 나란히 밀려요(곡선 경계라면 모양 자체가 바뀌고요).`;
+  }
+  document.getElementById('slt').oninput=e=>{thr=e.target.value/100;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">범주를 가르는 경계</text>`;
+  const rows=[['경계','두 영역을 나누는 선/곡선','var(--q)'],['확률','경계에서 멀수록 확신 ↑','var(--v)'],['임계값','몇 %부터 양성? (→ CH12)','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='회귀·분류라는 두 기본기 완성. 다음은 핵심 질문 — 외운 걸까 배운 걸까?';
+})();
+</script>
+</body>
+</html>

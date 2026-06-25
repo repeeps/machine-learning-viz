@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>06 · 편향-분산 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(251,191,36,.08);border:1px solid var(--hot);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--hot)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--hot)">PART B · 일반화 (기둥) — CH 06</div>
+    <h1>편향-분산</h1>
+    <p class="intro">시험 오차를 두 가지 다른 실수로 쪼개 보면 훨씬 또렷해져요. <b>편향</b> — 모델이 한쪽으로 <b>일관되게 치우쳐</b> 빗나가는 정도(과녁 중심에서 단체로 벗어남). <b>분산</b> — 데이터가 조금만 바뀌어도 <b>결과가 들쭉날쭉</b>한 정도(탄착군이 사방으로 흩어짐). 좋은 모델은 둘 다 작아야 해요. 과녁(다트판) 비유로 네 가지 경우를 직접 봐요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 과녁 네 칸</button>
+    <button data-s="1">01 · 다시 배울 때마다</button>
+    <button data-s="2">02 · 분해와 노이즈</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Four Targets</span>
+    <h2>치우침과 흩어짐</h2>
+    <p class="lead">다트를 던진다고 해봐요. 가운데(<b style="color:var(--good)">초록</b>)가 정답이에요. <b>편향</b>은 탄착군 중심이 정답에서 얼마나 벗어났나(치우침), <b>분산</b>은 탄착군이 얼마나 퍼졌나(흩어짐). 두 버튼으로 편향·분산을 각각 키워보며 네 조합을 보세요. 우리가 원하는 건 <b>저편향·저분산</b>(왼쪽 위) — 가운데에 촘촘히.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 편향=치우침, 분산=흩어짐. 둘 다 작아야 과녁 중앙.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Retrain &amp; Watch It Wobble</span>
+    <h2>데이터를 바꿔 다시 배우면</h2>
+    <p class="lead">분산은 "보이지 않는" 개념 같지만, 보는 방법이 있어요 — <b>같은 문제를 다른 표본으로 여러 번 다시 학습</b>해 보는 거예요. 단순한 모델은 매번 거의 같은 선을 그려요(저분산). 복잡한 모델은 표본이 조금만 바뀌어도 선이 <b>크게 출렁</b>여요(고분산). ▶로 다시 학습을 반복해 보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 분산 = 표본을 바꿔 다시 배울 때 결과가 흔들리는 정도.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Decomposition &amp; Noise</span>
+    <h2>시험 오차 = 편향² + 분산 + 노이즈</h2>
+    <p class="lead">복잡도를 키우면 보통 <b>편향은 줄고 분산은 늘어요</b> — 그래서 둘의 합(총 오차)이 U자를 그리죠. 슬라이더로 복잡도를 돌리며 두 막대가 시소처럼 반대로 움직이는 걸 보세요. 그런데 둘을 아무리 잘 맞춰도 <b>0으로는 못 가는</b> 바닥이 있어요 — 데이터 자체의 노이즈예요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">⚠️ <b>흔한 오해 셋</b> — ① 편향-분산은 과소-과적합과 <b>"느낌"은 비슷하지만 1:1 동의어가 아니에요</b>. 과소/과적합은 모델이 데이터에 맞는 정도를, 편향/분산은 <b>오차의 원천</b>을 말해요(겹치지만 같은 말은 아님). ② <b>노이즈(줄일 수 없는 오차)</b>는 편향·분산과 <b>별개</b>예요 — 데이터 측정·세상 자체의 무작위성이라 어떤 모델로도 못 없애요. ③ 분산은 한 모델의 그림이 아니라 "<b>여러 번 다시 학습하면 흔들리는 정도</b>"라는 점.</div>
+    <p class="note" style="margin-top:6px">→ 복잡도↑ → 편향↓·분산↑. 노이즈는 별개의 바닥.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">시험 오차는 <b>편향²(치우침) + 분산(흩어짐) + 노이즈(못 줄임)</b>로 쪼갤 수 있어요. 복잡도를 올리면 편향은 내려가지만 분산이 올라가니, 적당한 균형점이 최선. 그렇다면 <b>분산이 너무 클 때</b>(과적합)는 어떻게 누를까요? 모델의 복잡함에 직접 <b>벌점</b>을 매기는 방법 — 규제예요. 다음 챕터.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="07-regularization.html" style="color:var(--q);font-weight:700">CH 07 · 규제</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '06 · 편향-분산');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: four targets =====
+(function(){
+  let bias=0, varc=0; // 0 low / 1 high
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="b0">편향: 낮음</button><button class="btn" id="v0">분산: 낮음</button>`;
+  const R=ML.rng(11);
+  function shots(bx,by,spread){ const arr=[]; for(let i=0;i<9;i++){ arr.push({x:bx+(R()-0.5)*spread, y:by+(R()-0.5)*spread}); } return arr; }
+  function render(){ const W=460,H=210;
+    const bx=bias? 0.42:0, by=bias? -0.38:0; const spread=varc?1.25:0.32;
+    const sh=shots(bx,by,spread);
+    let s=ML.dartboard(230,100,{shots:sh, r:78, label:`${bias?'고':'저'}편향 · ${varc?'고':'저'}분산`});
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'과녁');
+    document.getElementById('b0').textContent='편향: '+(bias?'높음':'낮음');
+    document.getElementById('v0').textContent='분산: '+(varc?'높음':'낮음');
+    document.getElementById('b0').className='btn'+(bias?' active':'');
+    document.getElementById('v0').className='btn'+(varc?' active':'');
+    const msg = (!bias&&!varc)?`<b style="color:${ML.C.good}">이상적</b> — 가운데에 촘촘히. 정확하고 안정적.`
+      : (bias&&!varc)?`<b style="color:${ML.C.hot}">고편향·저분산</b> — 한 곳에 모이지만 정답에서 벗어남(과소적합 느낌).`
+      : (!bias&&varc)?`<b style="color:${ML.C.hot}">저편향·고분산</b> — 평균은 가운데지만 사방으로 흩어짐(과적합 느낌).`
+      : `<b style="color:${ML.C.dead}">고편향·고분산</b> — 치우치고 흩어지기까지. 최악.`;
+    document.getElementById('lab0').innerHTML=msg;
+  }
+  document.getElementById('b0').onclick=()=>{bias=bias?0:1;render();};
+  document.getElementById('v0').onclick=()=>{varc=varc?0:1;render();};
+  render();
+})();
+
+// ===== STEP 1: retrain wobble =====
+(function(){
+  let cplx=0, seed=1;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="sm1">단순 모델</button><button class="btn" id="cx1">복잡 모델</button><button class="btn" id="re1">다시 학습 🎲</button>`;
+  const TRUE=nx=>0.3+0.4*nx;
+  function fitLines(){ // generate several fits over resampled data
+    const lines=[];
+    for(let t=0;t<5;t++){ const R=ML.rng(seed*97+t*13); const pts=[];
+      for(let i=0;i<7;i++){ const nx=(i+0.5)/7; pts.push({x:nx,y:VZ.clamp(TRUE(nx)+(R()-0.5)*0.3,0,1)}); }
+      if(!cplx){ const N=pts.length;let sx=0,sy=0,sxy=0,sxx=0;pts.forEach(p=>{sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sxx+=p.x*p.x;});const d=N*sxx-sx*sx;const m=(N*sxy-sx*sy)/d;const b=(sy-m*sx)/N; lines.push(nx=>m*nx+b); }
+      else { lines.push(nx=>{ // wiggly interpolation-ish: follows resampled noise
+        let yy=TRUE(nx); pts.forEach(p=>{ const w=Math.exp(-((nx-p.x)*(nx-p.x))/0.004); yy=yy*(1-w*0.8)+p.y*w*0.8; }); return yy; }); }
+    }
+    return lines;
+  }
+  function render(){ const W=460,H=240; const lines=fitLines();
+    let inner=''; const P=ML.plane({x:70,y:18,w:330,h:200}); inner+=P.frame();
+    inner+=`<text x="235" y="12" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.muted}">${cplx?'복잡':'단순'} 모델 — 표본 바꿔 5번 학습</text>`;
+    lines.forEach((fn,k)=>{ let d=''; for(let i=0;i<=48;i++){ const nx=i/48; d+=(i?'L':'M')+P.px(nx).toFixed(1)+','+P.py(VZ.clamp(fn(nx),0,1)).toFixed(1)+' '; }
+      inner+=`<path d="${d}" fill="none" stroke="${cplx?ML.C.dead:ML.C.q}" stroke-width="1.8" opacity="0.6"/>`; });
+    document.getElementById('s1').innerHTML=ML.svg(W,H,inner,'다시 학습');
+    document.getElementById('sm1').className='btn'+(!cplx?' active':'');
+    document.getElementById('cx1').className='btn'+(cplx?' active':'');
+    document.getElementById('lab1').innerHTML= cplx
+      ? `<b style="color:${ML.C.dead}">복잡 모델</b> — 5개의 선이 제각각 크게 출렁여요. 표본이 조금만 달라도 결과가 흔들리죠 = <b>고분산</b>.`
+      : `<b style="color:${ML.C.q}">단순 모델</b> — 5개의 선이 거의 겹쳐요. 표본이 바뀌어도 안정적 = <b>저분산</b>. (다만 직선이라 편향은 있을 수 있어요)`;
+  }
+  document.getElementById('sm1').onclick=()=>{cplx=0;render();};
+  document.getElementById('cx1').onclick=()=>{cplx=1;render();};
+  document.getElementById('re1').onclick=()=>{seed++;render();};
+  render();
+})();
+
+// ===== STEP 2: decomposition bars + noise =====
+(function(){
+  let c=5;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>복잡도 <input type="range" id="sl2" min="0" max="10" value="5"></label>`;
+  function render(){ const W=460,H=210; const t=c/10;
+    const bias2=VZ.clamp(0.6*(1-t)*(1-t),0,1); const variance=VZ.clamp(0.05+0.7*t*t,0,1); const noise=0.12;
+    const total=VZ.clamp(bias2+variance+noise,0,1);
+    let s=ML.bars(40,26,{w:230, items:[
+      {label:'편향²',val:bias2,color:ML.C.q},
+      {label:'분산',val:variance,color:ML.C.dead},
+      {label:'노이즈',val:noise,color:ML.C.faint},
+      {label:'총 오차',val:total,color:ML.C.hot},
+    ]});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'오차 분해');
+    document.getElementById('lab2').innerHTML= `복잡도 <b>${c}/10</b> — 편향² <b style="color:${ML.C.q}">${(bias2*100|0)}</b>, 분산 <b style="color:${ML.C.dead}">${(variance*100|0)}</b>, 노이즈 <b style="color:${ML.C.faint}">${(noise*100|0)}</b>. 복잡도를 키우면 편향↓·분산↑ 시소가 움직이고, 노이즈는 <b>그대로</b>예요.`;
+  }
+  document.getElementById('sl2').oninput=e=>{c=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">오차 = 편향² + 분산 + 노이즈</text>`;
+  const rows=[['편향','일관된 치우침 (단순할수록↑)','var(--q)'],['분산','표본 따라 흔들림 (복잡할수록↑)','var(--dead)'],['노이즈','못 줄이는 바닥 (별개)','var(--faint)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='분산이 너무 클 때(과적합) 누르는 법 — 다음, 복잡함에 벌점을 매기는 규제.';
+})();
+</script>
+</body>
+</html>

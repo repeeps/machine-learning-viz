@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 · 정밀도와 재현율 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART D · 제대로 평가하기 — CH 12</div>
+    <h1>정밀도와 재현율</h1>
+    <p class="intro">혼동행렬의 네 칸을 두 개의 질문으로 요약해요. <b>정밀도</b> — "양성이라 <b>잡은 것 중</b> 진짜 양성은 몇 %?"(헛다리 안 짚었나). <b>재현율</b> — "진짜 양성 <b>중에서</b> 몇 %나 잡았나?"(놓친 거 없나). 둘은 보통 <b>한쪽을 올리면 다른쪽이 내려가요</b>. 그 줄다리기를 조종하는 손잡이가 바로 CH 03에서 만난 <b>임계값</b>이에요 — 몇 % 확신부터 "양성"이라 부를지.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 두 질문</button>
+    <button data-s="1">01 · 임계값 줄다리기</button>
+    <button data-s="2">02 · ROC 곡선</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — Two Questions</span>
+    <h2>잡은 것 중 진짜 vs 진짜 중 잡은 것</h2>
+    <p class="lead">그물로 물고기를 잡는다고 해봐요. <b>정밀도</b>는 "내 그물에 든 것 중 진짜 물고기 비율"(쓰레기 안 걸렸나), <b>재현율</b>은 "바다의 물고기 중 내가 잡은 비율"(다 잡았나). 같은 혼동행렬에서 두 지표가 어떻게 계산되는지 짚어 보세요. 분모가 다르다는 게 핵심이에요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 정밀도 = TP/(TP+FP), 재현율 = TP/(TP+FN). 분모가 달라요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — The Threshold Tug-of-War</span>
+    <h2>임계값을 올리면 시소가 기운다</h2>
+    <p class="lead">임계값을 <b>높이면</b>(아주 확신할 때만 양성) — 헛다리가 줄어 정밀도↑, 대신 애매한 진짜를 놓쳐 재현율↓. <b>낮추면</b> 반대로 재현율↑·정밀도↓. 슬라이더로 임계값을 옮기며 점들이 양성/음성으로 갈리고 두 지표가 시소처럼 움직이는 걸 보세요. "공짜 점심은 없다"는 게 핵심.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 임계값↑ = 정밀도↑·재현율↓. 상황에 맞는 균형을 골라요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — The ROC Curve</span>
+    <h2>모든 임계값을 한 곡선에</h2>
+    <p class="lead">임계값을 0부터 100까지 쭉 훑으며 모델의 성적을 한 점씩 찍으면 — <b>ROC 곡선</b>이 그려져요. 곡선이 왼쪽 위 모서리에 가까울수록 좋은 모델(잘 잡으면서 헛다리 적음). 대각선은 "찍기"(무작위) 수준이에요. 슬라이더의 임계값이 곡선 위 어디에 해당하는지 점으로 표시돼요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ ROC: 임계값 전체를 한 곡선으로. 왼쪽 위에 가까울수록 우수.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">정밀도·재현율은 두 종류의 실수를 따로 재고, 임계값이 둘을 줄다리기시켜요 — 암 검진은 재현율 우선(놓치면 안 됨), 스팸은 정밀도 우선(중요 메일 살려야). ROC는 그 전체 그림이죠. 그런데 — 지금까지 "시험 점수"는 데이터를 한 번 나눠 잰 거였어요. 그 한 번이 운 좋게/나쁘게 나뉘었다면? 더 공정하게 평가하는 법이 다음 챕터예요.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="13-cross-validation.html" style="color:var(--q);font-weight:700">CH 13 · 교차검증</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '12 · 정밀도와 재현율');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// population: each has true label and a model score 0..1
+const POP=(function(){ const R=ML.rng(42); const arr=[];
+  for(let i=0;i<60;i++){ const pos=R()<0.4; // score higher if positive, with overlap
+    const sc=VZ.clamp((pos?0.62:0.38)+(R()-0.5)*0.5,0.02,0.98); arr.push({pos,sc}); }
+  return arr; })();
+function metricsAt(thr){ let tp=0,fp=0,fn=0,tn=0;
+  POP.forEach(p=>{ const pred=p.sc>=thr; if(p.pos&&pred)tp++; else if(!p.pos&&pred)fp++; else if(p.pos&&!pred)fn++; else tn++; });
+  const prec=tp+fp?tp/(tp+fp):0, rec=tp+fn?tp/(tp+fn):0, fpr=fp+tn?fp/(fp+tn):0;
+  return {tp,fp,fn,tn,prec,rec,fpr}; }
+
+// ===== STEP 0: two questions =====
+(function(){
+  let sel=0; // 0 precision, 1 recall
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="q0">정밀도</button><button class="btn" id="q1">재현율</button>`;
+  function render(){ const W=460,H=210; const vals={tp:30,fn:14,fp:10,tn:120};
+    let s=ML.confusion(120,30,{...vals,cell:64});
+    // highlight which cells form numerator/denominator
+    // engine layout: positions (x,y): TP(120,30) FN(184,30) FP(120,94) TN(184,94)
+    const ring=(x,y,col)=>`<rect x="${x-2}" y="${y-2}" width="62" height="62" rx="6" fill="none" stroke="${col}" stroke-width="2.6"/>`;
+    if(sel===0){ s+=ring(120,30,ML.C.good)+ring(120,94,ML.C.hot); } // TP + FP (predicted positive column)
+    else { s+=ring(120,30,ML.C.good)+ring(184,30,ML.C.hot); } // TP + FN (actual positive row)
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'두 질문');
+    document.getElementById('q0').className='btn'+(sel===0?' active':'');
+    document.getElementById('q1').className='btn'+(sel===1?' active':'');
+    document.getElementById('lab0').innerHTML= sel===0
+      ? `<b style="color:${ML.C.q}">정밀도</b> = TP / (TP+FP) = 30/40 = <b>75%</b>. "양성이라 <b>예측한 것</b>(세로 한 칸 줄) 중 진짜"의 비율 — 분모는 내가 잡은 것.`
+      : `<b style="color:${ML.C.q}">재현율</b> = TP / (TP+FN) = 30/44 = <b>68%</b>. "<b>실제 양성</b>(가로 한 칸 줄) 중 내가 잡은 것"의 비율 — 분모는 세상의 진짜.`;
+  }
+  document.getElementById('q0').onclick=()=>{sel=0;render();};
+  document.getElementById('q1').onclick=()=>{sel=1;render();};
+  render();
+})();
+
+// ===== STEP 1: threshold tug-of-war =====
+(function(){
+  let thr=0.5;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>임계값 <input type="range" id="sl1" min="5" max="85" value="50"> <span id="tv">0.50</span></label>`;
+  function render(){ const W=460,H=240; const m=metricsAt(thr);
+    // visual: points on a score axis, line at thr, colored by true label, shape by predicted
+    let s=''; const P=ML.plane({x:40,y:18,w:380,h:120}); s+=P.frame();
+    const tx=P.px(thr);
+    s+=`<line x1="${tx.toFixed(1)}" y1="${P.py(0)}" x2="${tx.toFixed(1)}" y2="${P.py(1)}" stroke="${ML.C.hot}" stroke-width="2"/>`;
+    s+=`<text x="${tx.toFixed(1)}" y="14" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.hot}">임계값</text>`;
+    s+=`<text x="${P.px(0.12)}" y="135" font-size="8" font-family="monospace" fill="${ML.C.faint}">← 음성 예측</text>`;
+    s+=`<text x="${P.px(0.88)}" y="135" text-anchor="end" font-size="8" font-family="monospace" fill="${ML.C.faint}">양성 예측 →</text>`;
+    POP.forEach((p,i)=>{ const x=P.px(p.sc), y=P.py(0.15+ (i%9)/9*0.7);
+      s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="${p.pos?ML.C.cls[1]:ML.C.cls[0]}" opacity="0.9"/>`; });
+    // bars
+    s+=ML.bars(70,160,{w:200, items:[{label:'정밀도',val:m.prec,color:ML.C.q},{label:'재현율',val:m.rec,color:ML.C.v}]});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'임계값');
+    document.getElementById('tv').textContent=thr.toFixed(2);
+    document.getElementById('lab1').innerHTML=`임계값 <b style="color:${ML.C.hot}">${thr.toFixed(2)}</b> → 정밀도 <b style="color:${ML.C.q}">${(m.prec*100|0)}%</b> · 재현율 <b style="color:${ML.C.v}">${(m.rec*100|0)}%</b>. ${thr>0.6?'높게 두니 정밀도↑·재현율↓(놓침 많아짐).':thr<0.4?'낮게 두니 재현율↑·정밀도↓(헛다리 많아짐).':'중간 — 둘이 비슷하게 균형.'}`;
+  }
+  document.getElementById('sl1').oninput=e=>{thr=e.target.value/100;render();};
+  render();
+})();
+
+// ===== STEP 2: ROC =====
+(function(){
+  let thr=0.5;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label>임계값 <input type="range" id="sl2" min="5" max="95" value="50"> <span id="tv2">0.50</span></label>`;
+  // build ROC points by sweeping
+  const pts=[]; for(let t=100;t>=0;t-=4){ const m=metricsAt(t/100); pts.push({x:m.fpr,y:m.rec}); }
+  function render(){ const W=460,H=240; const m=metricsAt(thr);
+    let s=ML.roc(80,18,300,200,{pts, mark:{x:m.fpr,y:m.rec}, });
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'ROC');
+    document.getElementById('tv2').textContent=thr.toFixed(2);
+    document.getElementById('lab2').innerHTML=`임계값 <b style="color:${ML.C.hot}">${thr.toFixed(2)}</b>의 위치 — 거짓양성률 <b>${(m.fpr*100|0)}%</b>, 재현율 <b>${(m.rec*100|0)}%</b>. 임계값을 움직이면 점이 곡선을 따라 미끄러져요. 곡선이 <b>왼쪽 위</b>로 부풀수록 좋은 모델.`;
+  }
+  document.getElementById('sl2').oninput=e=>{thr=e.target.value/100;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">두 실수, 한 손잡이</text>`;
+  const rows=[['정밀도','잡은 것 중 진짜 (헛다리?)','var(--q)'],['재현율','진짜 중 잡은 것 (놓침?)','var(--v)'],['임계값','둘을 줄다리기 (공짜 없음)','var(--hot)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='한 번 나눈 시험은 운빨 — 다음, 공정하게 여러 번 재는 교차검증.';
+})();
+</script>
+</body>
+</html>

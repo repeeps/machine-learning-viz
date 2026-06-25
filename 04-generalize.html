@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>04 · 학습 vs 암기 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(248,113,113,.08);border:1px solid var(--dead);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--dead)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--hot)">PART B · 일반화 (기둥) — CH 04</div>
+    <h1>학습 vs 암기</h1>
+    <p class="intro">시험 전날 기출문제 답만 통째로 외운 학생을 떠올려 보세요. 본 문제는 100점인데, 처음 보는 응용문제는 0점. 모델도 똑같아요 — 훈련 데이터를 <b>외우기만</b> 하면 정작 실전(처음 보는 데이터)에서 망해요. 우리가 진짜 원하는 건 <b>일반화</b>: 본 적 없는 데이터도 잘 맞히는 능력. 그래서 데이터를 <b>훈련용·시험용으로 나눠</b>, 시험용은 학습에 절대 안 쓰고 채점에만 써요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 외운 학생</button>
+    <button data-s="1">01 · 훈련/시험 분리</button>
+    <button data-s="2">02 · 누수와 검증셋</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Memorize vs Understand</span>
+    <h2>외운 100점, 실전 0점</h2>
+    <p class="lead">두 모델이 같은 훈련 점들을 봤어요. 왼쪽은 점을 <b>전부 통과</b>하는 구불구불한 선(외우기), 오른쪽은 <b>큰 흐름</b>만 잡은 매끈한 선(이해). 훈련 점만 보면 왼쪽이 완벽해 보여요. 하지만 새 점(<b style="color:var(--hot)">앰버</b>)이 오면? 외운 모델이 더 크게 빗나가요.</p>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 훈련 점 완벽 통과 ≠ 좋은 모델. 새 점에서 진짜 실력이 드러나요.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Train/Test Split</span>
+    <h2>채점지는 따로 숨겨둔다</h2>
+    <p class="lead">데이터를 받으면 먼저 <b>둘로 나눠요</b> — 대부분은 <b>훈련용</b>(배우기), 일부는 <b>시험용</b>(채점). 시험용은 학습이 끝날 때까지 <b>봉인</b>해요. 모델이 시험 데이터를 미리 봤다면 그 점수는 거짓이니까요. 슬라이더로 분할 비율을 바꿔 보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 시험용 데이터는 학습에 절대 안 씀 — 봉인된 채점지.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Leakage &amp; Validation Set</span>
+    <h2>시험지를 미리 보면 안 돼</h2>
+    <p class="lead">그런데 모델을 만들다 보면 "몇 가지 설정"을 골라야 해요 — 예: 경계를 얼마나 휘게 할지. 이런 값을 <b>하이퍼파라미터</b>라 부르고, 이건 모델이 데이터에서 배우는 값(<b>파라미터</b>)과 달라요. 사람이 골라줘야 하죠. 그런데 이걸 <b>시험 데이터로 고르면</b>? 시험지를 미리 본 셈이에요. 그래서 훈련 안에서 또 일부를 떼어 <b>검증셋</b>으로 써요.</p>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">⚠️ <b>데이터 누수(leakage)</b> — 시험 데이터의 정보가 학습 과정에 새어 들어가는 것. 시험 점수로 설정을 고르거나, 전체 데이터로 평균을 내 미리 가공하면 — 점수가 부풀려져 실전에서 무너져요. "<b>시험지는 끝까지 봉인</b>"이 철칙. 이걸 공정하게 자동화하는 방법이 <b style="color:var(--v)">CH 13(교차검증)</b>이에요.</div>
+    <p class="note" style="margin-top:6px">→ 파라미터(배움) vs 하이퍼파라미터(사람 선택). 고르는 채점은 검증셋으로.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">목표는 훈련 점수가 아니라 <b>일반화</b> — 처음 보는 데이터의 점수예요. 그래서 데이터를 훈련/검증/시험으로 나누고, 시험지는 끝까지 봉인하죠. 그런데 외우기(과한 복잡함)와 대충 보기(부족한 복잡함) 사이엔 분명한 긴장이 있어요. 그 줄다리기를 다음 챕터에서 정면으로 봐요 — 과적합과 과소적합.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="05-overfitting.html" style="color:var(--q);font-weight:700">CH 05 · 과적합 vs 과소적합</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '04 · 학습 vs 암기');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: memorize vs understand =====
+(function(){ const W=460,H=240;
+  const tr=[{x:0.12,y:0.3},{x:0.28,y:0.5},{x:0.42,y:0.32},{x:0.56,y:0.58},{x:0.72,y:0.42},{x:0.86,y:0.66}];
+  const test={x:0.5,y:0.46};
+  // wiggly fn passing all train points (memorize) — sine-ish
+  const wig=nx=> 0.45+0.22*Math.sin(nx*22)+ (nx-0.5)*0.3;
+  const smooth=nx=> 0.3+0.4*nx;
+  let s='';
+  s+=ML.curve(28,20,200,196,{pts:tr, fn:wig, testPts:[test], color:ML.C.dead, title:'외우기 — 점을 다 통과'});
+  s+=ML.curve(252,20,200,196,{pts:tr, fn:smooth, testPts:[test], color:ML.C.good, title:'이해 — 큰 흐름만'});
+  document.getElementById('s0').innerHTML=ML.svg(W,H,s,'암기 vs 이해');
+  document.getElementById('lab0').innerHTML=`<b style="color:${ML.C.dead}">왼쪽(외우기)</b>은 훈련 점을 완벽히 지나지만 새 점(<b style="color:${ML.C.test}">앰버</b>) 근처에서 요동쳐요. <b style="color:${ML.C.good}">오른쪽(이해)</b>은 훈련 점을 조금 놓쳐도 새 점을 더 잘 맞혀요.`;
+})();
+
+// ===== STEP 1: train/test split =====
+(function(){
+  let tr=70;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>훈련 비율 <input type="range" id="sl1" min="50" max="90" value="70"> <span id="tv">70%</span></label>`;
+  function render(){ const W=460,H=120; const total=20; const ntr=Math.round(total*tr/100), nte=total-ntr;
+    let s=''; const bw=(W-40)/total;
+    for(let i=0;i<total;i++){ const isTr=i<ntr; const x=20+i*bw;
+      s+=`<rect x="${x.toFixed(1)}" y="40" width="${(bw-3).toFixed(1)}" height="40" rx="4" fill="${isTr?ML.C.train:ML.C.test}" opacity="${isTr?0.55:0.9}" stroke="${isTr?ML.C.train:ML.C.test}" stroke-width="1.2"/>`;
+    }
+    s+=`<text x="${20+ntr*bw/2}" y="28" text-anchor="middle" font-size="10" font-family="monospace" font-weight="700" fill="${ML.C.train}">훈련 ${ntr}</text>`;
+    s+=`<text x="${20+(ntr+nte/2)*bw}" y="28" text-anchor="middle" font-size="10" font-family="monospace" font-weight="700" fill="${ML.C.test}">시험 ${nte}</text>`;
+    s+=`<text x="${20+(ntr+nte/2)*bw}" y="98" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">🔒 봉인</text>`;
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'훈련/시험 분리');
+    document.getElementById('tv').textContent=`${tr}%`;
+    document.getElementById('lab1').innerHTML=`훈련 <b style="color:${ML.C.train}">${ntr}개</b>로 배우고, 시험 <b style="color:${ML.C.test}">${nte}개</b>로 채점해요. 시험이 너무 적으면 점수가 들쭉날쭉, 너무 많으면 배울 게 부족 — 보통 70~80%를 훈련에.`;
+  }
+  document.getElementById('sl1').oninput=e=>{tr=+e.target.value;render();};
+  render();
+})();
+
+// ===== STEP 2: validation set =====
+(function(){ const W=460,H=130;
+  let s=''; const segs=[['훈련',0.6,ML.C.train,0.55],['검증',0.2,ML.C.v,0.85],['시험',0.2,ML.C.test,0.9]];
+  let x=20; const tw=W-40;
+  segs.forEach(g=>{ const w=tw*g[1]; s+=`<rect x="${x.toFixed(1)}" y="48" width="${(w-4).toFixed(1)}" height="44" rx="7" fill="${g[2]}" opacity="${g[3]}" stroke="${g[2]}" stroke-width="1.3"/>`;
+    s+=`<text x="${(x+w/2).toFixed(1)}" y="74" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="#0b0e14">${g[0]}</text>`;
+    x+=w; });
+  s+=`<text x="${20+tw*0.3}" y="36" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">배우기</text>`;
+  s+=`<text x="${20+tw*0.7}" y="36" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">설정 고르기</text>`;
+  s+=`<text x="${20+tw*0.9}" y="36" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">최종 채점 🔒</text>`;
+  document.getElementById('s2').innerHTML=ML.svg(W,H,s,'검증셋');
+  document.getElementById('lab2').innerHTML=`데이터 셋 = <b style="color:${ML.C.train}">훈련</b>(파라미터 배움) + <b style="color:${ML.C.v}">검증</b>(하이퍼파라미터 선택) + <b style="color:${ML.C.test}">시험</b>(끝까지 봉인, 한 번만). 검증셋이 있어야 시험지를 안 들춰요.`;
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">목표는 일반화</text>`;
+  const rows=[['일반화','처음 보는 데이터의 점수','var(--good)'],['분리','훈련/검증/시험, 시험은 봉인','var(--q)'],['누수','시험 정보가 새면 점수 거짓','var(--dead)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='외우기와 대충 보기 사이 — 그 줄다리기가 다음, 과적합 vs 과소적합.';
+})();
+</script>
+</body>
+</html>

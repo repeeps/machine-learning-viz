@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>02 · 회귀 — 선을 맞추다 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART A · 무엇을 배우나 — CH 02</div>
+    <h1>회귀 — 선을 맞추다</h1>
+    <p class="intro">라벨이 <b>연속된 숫자</b>(집값·온도·키)일 때 푸는 게 <b>회귀</b>예요. 흩어진 점들을 <b>가장 잘 지나는 선</b> 하나를 찾는 거죠. "잘"의 기준은 단순해요 — 점과 선 사이의 세로 거리(<b>잔차</b>)가 작을수록 좋은 선. 이 챕터에선 직접 손으로 선을 기울여 잔차를 줄여 보고, 컴퓨터가 그 일을 어떻게 자동으로 하는지 감을 잡아요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 잔차</button>
+    <button data-s="1">01 · 직접 맞춰보기</button>
+    <button data-s="2">02 · 자동으로 줄이기</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — Residuals</span>
+    <h2>점과 선의 어긋남</h2>
+    <p class="lead">어떤 선을 그었다고 해봐요. 각 점에서 선까지의 <b>세로 거리</b>가 그 점의 <b>잔차</b>예요(주황 막대). 선이 예측한 값과 실제 값의 차이죠. 잔차가 0이면 선이 그 점을 정확히 맞힌 거예요. 회귀의 목표는 이 잔차들을 <b>전체적으로</b> 작게 만드는 선을 찾는 것.</p>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 잔차 = 실제값 − 예측값(세로 거리). 작을수록 잘 맞은 점.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — Fit It Yourself</span>
+    <h2>직접 선을 기울여 보기</h2>
+    <p class="lead">두 슬라이더로 선의 <b>기울기</b>와 <b>높이</b>를 바꿔 보세요. 아래 숫자는 <b>전체 오차</b>(잔차를 제곱해 더한 값)예요 — 작을수록 좋은 선. 손으로 이리저리 움직이며 가장 작은 값을 찾아보세요. 이게 바로 모델이 "학습"할 때 푸는 문제예요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 학습 = 전체 오차를 가장 작게 만드는 기울기·높이 찾기.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Letting the Computer Do It</span>
+    <h2>왜 제곱? 그리고 자동으로</h2>
+    <p class="lead">오차를 더할 때 왜 <b>제곱</b>할까요? 그냥 더하면 위로 빗나간 +와 아래로 빗나간 −가 상쇄돼 버려요. 제곱하면 모두 양수가 되고, <b>크게 빗나간 점</b>에 더 큰 벌점이 붙죠. 사실 이런 단순한 선은 공식으로 단번에 답을 구할 수도 있어요. 하지만 <b>더 복잡한 모델</b>은 그게 안 돼서 — 오차가 줄어드는 방향으로 선을 <b>조금씩 자동 반복</b>해 굴려 내려가요(경사하강). ▶를 눌러 그 내리막을 보세요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 제곱 = 부호 상쇄 막고 큰 오차 강조. 내리막 자동 반복(그 수학은 미적분 트랙).</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">회귀 = 점과 선의 거리(잔차) 제곱합을 가장 작게 만드는 선 찾기. 그런데 주의 — 훈련 점들에 <b>딱 맞췄다고 끝이 아니에요</b>. 우리가 진짜 원하는 건 <b>처음 보는 입력</b>도 잘 맞히는 것. 훈련 데이터에만 집착하면 오히려 망할 수 있어요(PART B에서 본격적으로). 다음은 라벨이 숫자가 아니라 <b>범주</b>일 때 — 분류.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="03-classification.html" style="color:var(--q);font-weight:700">CH 03 · 분류 — 경계를 긋다</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '02 · 회귀 — 선을 맞추다');
+VZ.setupStepper();
+const ML=VZ.ML;
+const PTS=[{x:0.12,y:0.2},{x:0.28,y:0.36},{x:0.42,y:0.34},{x:0.55,y:0.56},{x:0.68,y:0.54},{x:0.82,y:0.74}];
+const sse=(m,b)=>PTS.reduce((a,p)=>{const e=p.y-(m*p.x+b);return a+e*e;},0);
+// best fit (least squares)
+const BEST=(function(){const N=PTS.length;let sx=0,sy=0,sxy=0,sxx=0;PTS.forEach(p=>{sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sxx+=p.x*p.x;});const d=N*sxx-sx*sx;const m=(N*sxy-sx*sy)/d;return{m,b:(sy-m*sx)/N};})();
+
+// ===== STEP 0: residuals =====
+(function(){ const W=460,H=240;
+  let s=ML.scatter(70,18,330,200,{pts:PTS,line:{m:0.6,b:0.16},residuals:true,axes:['특징 →','라벨 →'],title:'잔차 = 점에서 선까지 세로 거리'});
+  document.getElementById('s0').innerHTML=ML.svg(W,H,s,'잔차');
+  document.getElementById('lab0').innerHTML=`주황 막대 하나하나가 한 점의 <b style="color:${ML.C.resid}">잔차</b> — 선이 그 점을 얼마나 빗나갔는지예요. 회귀는 이 막대들의 합(정확히는 제곱합)을 줄여요.`;
+})();
+
+// ===== STEP 1: fit it yourself =====
+(function(){
+  let m=0.2, b=0.5;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>기울기 <input type="range" id="slm" min="-20" max="120" value="20"></label>`+
+                 `<label>높이 <input type="range" id="slb" min="0" max="80" value="50"></label>`+
+                 `<button class="btn" id="auto1">정답 보기</button>`;
+  function render(){ const W=460,H=240; const err=sse(m,b);
+    let s=ML.scatter(70,18,330,200,{pts:PTS,line:{m,b},residuals:true,axes:['특징 →','라벨 →'],title:'슬라이더로 잔차를 줄여보세요'});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'직접 맞추기');
+    const near = err < sse(BEST.m,BEST.b)*1.12;
+    document.getElementById('lab1').innerHTML=`전체 오차(제곱합) = <b style="color:${near?ML.C.good:ML.C.hot}">${err.toFixed(3)}</b> ${near?'— 거의 최선이에요! 👏':'— 더 줄일 수 있어요.'} (가능한 최솟값 ≈ ${sse(BEST.m,BEST.b).toFixed(3)})`;
+  }
+  document.getElementById('slm').oninput=e=>{ m=e.target.value/100; render(); };
+  document.getElementById('slb').oninput=e=>{ b=e.target.value/100; render(); };
+  document.getElementById('auto1').onclick=()=>{ m=BEST.m; b=BEST.b;
+    document.getElementById('slm').value=Math.round(m*100); document.getElementById('slb').value=Math.round(b*100); render(); };
+  render();
+})();
+
+// ===== STEP 2: gradient descent + why square =====
+(function(){
+  // a small descent path toward BEST
+  let m=0.05,b=0.62, step=0, playing=false, timer=null;
+  const lr=0.9;
+  function grad(m,b){ let gm=0,gb=0; PTS.forEach(p=>{const e=(m*p.x+b)-p.y; gm+=2*e*p.x; gb+=2*e;}); const n=PTS.length; return {gm:gm/n,gb:gb/n}; }
+  const play=document.getElementById('play2');
+  play.innerHTML=`<button class="btn" id="step2">한 걸음 ▶</button><button class="btn" id="run2">자동 ▶▶</button><button class="btn" id="reset2">처음</button><span class="note" id="cnt2" style="margin-left:8px"></span>`;
+  function render(){ const W=460,H=240; const err=sse(m,b);
+    let s=ML.scatter(70,18,330,200,{pts:PTS,line:{m,b},residuals:true,axes:['특징 →','라벨 →'],title:`내리막 ${step}걸음 · 오차 ${err.toFixed(3)}`});
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'자동 학습');
+    document.getElementById('cnt2').textContent=`${step}걸음`;
+    document.getElementById('lab2').innerHTML= step===0
+      ? `시작은 아무 선이나. 오차 <b style="color:${ML.C.hot}">${err.toFixed(3)}</b>. 한 걸음씩 오차가 줄어드는 방향으로 선을 굴려요.`
+      : `걸음마다 오차가 줄죠(현재 <b style="color:${ML.C.good}">${err.toFixed(3)}</b>). 컴퓨터는 이 내리막을 여러 번 반복해 최선의 선에 다가가요. <b>"어느 방향이 내리막인지"</b>를 찾는 게 미분 — 그 수학은 미적분 트랙에서.`;
+  }
+  function stepOnce(){ const {gm,gb}=grad(m,b); m-=lr*gm; b-=lr*gb; step++; render(); }
+  document.getElementById('step2').onclick=()=>{ if(step<60) stepOnce(); };
+  document.getElementById('run2').onclick=()=>{ if(playing){clearInterval(timer);playing=false;document.getElementById('run2').textContent='자동 ▶▶';return;}
+    playing=true; document.getElementById('run2').textContent='⏸ 멈춤'; timer=setInterval(()=>{ if(step>=60){clearInterval(timer);playing=false;document.getElementById('run2').textContent='자동 ▶▶';return;} stepOnce(); },180); };
+  document.getElementById('reset2').onclick=()=>{ if(timer)clearInterval(timer); playing=false; document.getElementById('run2').textContent='자동 ▶▶'; m=0.05;b=0.62;step=0; render(); };
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">잔차 제곱합 최소화</text>`;
+  const rows=[['잔차','점과 선의 세로 거리','var(--dead)'],['제곱','부호 상쇄 막고 큰 오차 강조','var(--v)'],['학습','오차 줄어드는 선 자동 탐색','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='훈련 점에 잘 맞춘 것 ≠ 최종 목표. 다음은 답이 범주일 때 — <b>분류</b>.';
+})();
+</script>
+</body>
+</html>

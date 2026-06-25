@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>01 · 지도학습이란 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:10px; margin:10px 0; flex-wrap:wrap;}
+  svg{display:block; width:100%;}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART A · 무엇을 배우나 — CH 01</div>
+    <h1>지도학습이란</h1>
+    <p class="intro">지도학습의 재료는 단 두 가지 — <b>특징</b>(입력으로 주는 값)과 <b>라벨</b>(맞혀야 할 정답)이에요. "넓이로 집값 맞히기"라면 넓이가 특징, 집값이 라벨. 정답이 달린 예시를 잔뜩 보여주면 기계는 그 안의 관계를 <b>모델</b>로 압축하고, 그 뒤로는 라벨 없는 새 입력에도 답을 내놓아요. "지도(supervised)"라는 이름은 — 정답이라는 <b>선생님</b>이 옆에서 채점해 준다는 뜻이에요.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 특징과 라벨</button>
+    <button data-s="1">01 · 예시 → 모델</button>
+    <button data-s="2">02 · 예측</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — Features &amp; Labels</span>
+    <h2>입력(특징)과 정답(라벨)</h2>
+    <p class="lead">예시 하나하나는 <b>특징</b>(왼쪽 값들)과 <b>라벨</b>(맨 오른쪽 정답)의 짝이에요. 행을 짚어 보세요. 모델은 이 표를 보며 "특징이 이러면 라벨이 저렇더라"는 관계를 찾아요. 사람은 정답만 달아주고, 규칙 찾기는 기계 몫이에요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 한 예시 = 특징(입력) + 라벨(정답). 둘의 짝이 학습 재료.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — Examples Become a Model</span>
+    <h2>흩어진 점이 규칙이 되다</h2>
+    <p class="lead">특징을 가로축, 라벨을 세로축에 두고 예시를 점으로 찍으면 — 패턴이 보이죠. 모델은 이 점들을 관통하는 <b>규칙</b>(여기선 선)을 찾아요. 점을 늘려 보세요. 예시가 많을수록 규칙이 또렷해져요. <b>이 선이 곧 "배운 것"</b>이에요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 점(예시)에서 선(규칙)으로. 예시가 많을수록 규칙이 또렷.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Prediction</span>
+    <h2>처음 보는 입력에 답하기</h2>
+    <p class="lead">배운 규칙(선)이 있으면, <b>라벨이 없는 새 입력</b>이 와도 답할 수 있어요. 슬라이더로 새 특징값을 정하면 — 모델은 선 위의 해당 위치를 읽어 라벨을 <b>예측</b>해요. 이게 모델을 쓰는 이유예요: 본 적 없는 데이터에 답하기.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 새 입력 → 모델 → 예측. 라벨 없이 들어와 라벨이 붙어 나가요.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">지도학습 = <b>특징·라벨 짝</b>으로 <b>모델</b>을 만들고, 새 입력의 라벨을 <b>예측</b>한다. 그런데 라벨이 <b>숫자</b>냐 <b>범주</b>냐에 따라 문제가 둘로 갈려요 — 점을 지나는 선을 찾는 <b>회귀</b>, 영역을 가르는 경계를 찾는 <b>분류</b>. 다음 두 챕터에서 하나씩.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="02-regression.html" style="color:var(--q);font-weight:700">CH 02 · 회귀 — 선을 맞추다</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '01 · 지도학습이란');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: features & labels table =====
+(function(){
+  const rows=[
+    {f:['18','신축','역세권'], y:'4.2억'},
+    {f:['25','신축','보통'],   y:'5.1억'},
+    {f:['33','구축','역세권'], y:'5.8억'},
+    {f:['40','구축','보통'],   y:'6.0억'},
+  ];
+  let sel=0;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="prev0">◀</button><button class="btn" id="next0">다음 예시 ▶</button><span class="note" id="cnt0" style="margin-left:8px"></span>`;
+  function render(){ const W=460,H=190; let s='';
+    const cols=['넓이(평)','연식','입지','▶ 집값'];
+    const cx=[60,160,250,360];
+    cols.forEach((c,i)=>{ const isLab=i===3;
+      s+=`<text x="${cx[i]}" y="28" text-anchor="middle" font-size="10" font-family="monospace" font-weight="700" fill="${isLab?ML.C.good:ML.C.q}">${c}</text>`;
+    });
+    s+=`<line x1="305" y1="14" x2="305" y2="180" stroke="${ML.C.line}" stroke-width="1" stroke-dasharray="3 3"/>`;
+    s+=`<text x="232" y="14" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">특징(입력)</text>`;
+    s+=`<text x="380" y="14" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">라벨(정답)</text>`;
+    rows.forEach((r,i)=>{ const y=42+i*34, on=i===sel;
+      s+=`<rect x="20" y="${y}" width="420" height="28" rx="6" fill="${on?'rgba(55,189,248,.10)':'var(--panel)'}" stroke="${on?ML.C.q:ML.C.line}" stroke-width="${on?2:1}"/>`;
+      r.f.forEach((v,j)=>{ s+=`<text x="${cx[j]}" y="${y+18}" text-anchor="middle" font-size="11" font-family="monospace" fill="${ML.C.muted}">${ML.esc(v)}</text>`; });
+      s+=`<text x="${cx[3]}" y="${y+18}" text-anchor="middle" font-size="11.5" font-family="monospace" font-weight="700" fill="${ML.C.good}">${ML.esc(r.y)}</text>`;
+    });
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'특징·라벨 표');
+    document.getElementById('cnt0').textContent=`예시 ${sel+1} / ${rows.length}`;
+    const r=rows[sel];
+    document.getElementById('lab0').innerHTML=`특징 <b style="color:${ML.C.q}">[넓이 ${r.f[0]}평, ${r.f[1]}, ${r.f[2]}]</b> → 라벨 <b style="color:${ML.C.good}">${r.y}</b>. 모델은 이런 짝을 잔뜩 보며 "특징→라벨" 관계를 배워요.`;
+  }
+  document.getElementById('next0').onclick=()=>{ sel=(sel+1)%rows.length; render(); };
+  document.getElementById('prev0').onclick=()=>{ sel=(sel-1+rows.length)%rows.length; render(); };
+  render();
+})();
+
+// ===== STEP 1: points -> line =====
+(function(){
+  const all=[{x:0.12,y:0.22},{x:0.22,y:0.3},{x:0.33,y:0.36},{x:0.45,y:0.46},
+             {x:0.55,y:0.52},{x:0.66,y:0.6},{x:0.78,y:0.72},{x:0.9,y:0.8}];
+  let n=2;
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="less1">예시 빼기</button><button class="btn" id="more1">예시 추가 ▶</button><span class="note" id="cnt1" style="margin-left:8px"></span>`;
+  function fit(pts){ // simple least squares
+    const N=pts.length; let sx=0,sy=0,sxy=0,sxx=0; pts.forEach(p=>{sx+=p.x;sy+=p.y;sxy+=p.x*p.y;sxx+=p.x*p.x;});
+    const d=N*sxx-sx*sx; const m=d?(N*sxy-sx*sy)/d:1; const b=(sy-m*sx)/N; return {m,b};
+  }
+  function render(){ const W=460,H=240; const pts=all.slice(0,n); const ln=fit(pts);
+    let s=ML.scatter(70,18,330,200,{pts,line:n>=2?ln:null,axes:['특징 →','라벨 →'],title:`예시 ${n}개로 배운 규칙`});
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'점에서 선으로');
+    document.getElementById('cnt1').textContent=`예시 ${n}개`;
+    document.getElementById('lab1').innerHTML= n<3
+      ? `예시가 <b>${n}개</b>뿐이면 선이 흔들려요 — 우연에 끌려가기 쉽죠. 더 추가해 보세요.`
+      : `예시 <b>${n}개</b>. 점이 많아질수록 선(규칙)이 안정돼요. <b style="color:${ML.C.fit}">이 보라색 선이 "배운 것"</b> — 이걸로 새 입력을 예측해요.`;
+  }
+  document.getElementById('more1').onclick=()=>{ n=Math.min(n+1,all.length); render(); };
+  document.getElementById('less1').onclick=()=>{ n=Math.max(2,n-1); render(); };
+  render();
+})();
+
+// ===== STEP 2: prediction with slider =====
+(function(){
+  const pts=[{x:0.12,y:0.22},{x:0.22,y:0.3},{x:0.33,y:0.36},{x:0.45,y:0.46},
+             {x:0.55,y:0.52},{x:0.66,y:0.6},{x:0.78,y:0.72},{x:0.9,y:0.8}];
+  const m=0.66,b=0.14; // pre-fit
+  let nx=0.5;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<label class="note">새 입력(특징): <input type="range" id="sl2" min="0" max="100" value="50" style="vertical-align:middle"></label>`;
+  function render(){ const W=460,H=240; const ny=m*nx+b;
+    let s=ML.scatter(70,18,330,200,{pts,line:{m,b},axes:['특징 →','라벨 →'],title:'예측 — 선 위의 값을 읽기'});
+    // overlay: vertical+horizontal guide to new prediction (recompute pixel via plane)
+    const P=ML.plane({x:70,y:18,w:330,h:200});
+    const px=P.px(nx), py=P.py(VZ.clamp(ny,0,1));
+    s+=`<line x1="${px.toFixed(1)}" y1="${P.py(0)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}" stroke="${ML.C.hot}" stroke-width="1.4" stroke-dasharray="4 3"/>`;
+    s+=`<line x1="${P.px(0)}" y1="${py.toFixed(1)}" x2="${px.toFixed(1)}" y2="${py.toFixed(1)}" stroke="${ML.C.hot}" stroke-width="1.4" stroke-dasharray="4 3"/>`;
+    s+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="6" fill="${ML.C.hot}" stroke="var(--bg)" stroke-width="1.6"/>`;
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'예측');
+    document.getElementById('lab2').innerHTML=`새 입력 특징 <b style="color:${ML.C.hot}">${(nx*100).toFixed(0)}</b> → 모델이 선에서 읽은 예측 라벨 <b style="color:${ML.C.hot}">${(ny*100).toFixed(0)}</b>. 점(예시)이 없던 자리도 선만 있으면 답이 나와요.`;
+  }
+  document.getElementById('sl2').oninput=e=>{ nx=e.target.value/100; render(); };
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">특징 → 모델 → 예측</text>`;
+  const rows=[['재료','특징(입력) + 라벨(정답)의 짝','var(--q)'],['모델','짝에서 찾아낸 규칙','var(--v)'],['쓰임','새 입력의 라벨을 예측','var(--good)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='라벨이 숫자면 회귀, 범주면 분류 — 다음은 숫자를 맞히는 <b>회귀</b>부터.';
+})();
+</script>
+</body>
+</html>

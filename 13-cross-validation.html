@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>13 · 교차검증 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:14px; margin:10px 0; flex-wrap:wrap;}
+  .ctl label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  svg{display:block; width:100%;}
+  .nbox{margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(248,113,113,.08);border:1px solid var(--dead);font-size:13px;line-height:1.6;color:var(--ink)}
+  .nbox b{color:var(--dead)}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--q)">PART D · 제대로 평가하기 — CH 13</div>
+    <h1>교차검증</h1>
+    <p class="intro">데이터를 훈련/시험으로 딱 한 번 나누면 — 그 한 번이 <b>운</b>에 좌우돼요. 우연히 쉬운 문제만 시험에 몰리면 점수가 부풀고, 어려운 것만 몰리면 억울하게 낮죠. <b>교차검증</b>은 이 운을 없애요. 데이터를 여러 조각(폴드)으로 나눠, <b>돌아가며</b> 한 조각씩 시험으로 쓰고 나머지로 학습 — 그렇게 나온 여러 점수의 <b>평균</b>을 봐요. 한 번의 요행 대신 안정된 평가가 나오죠.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 한 번의 운빨</button>
+    <button data-s="1">01 · k-폴드 돌리기</button>
+    <button data-s="2">02 · 누수 조심</button>
+    <button data-s="3">03 · 정리</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--q)">Step 00 — One Split Is Luck</span>
+    <h2>어디서 자르냐에 점수가 흔들린다</h2>
+    <p class="lead">같은 데이터·같은 모델인데, <b>나누는 지점</b>만 바꿔도 시험 점수가 출렁여요. 버튼으로 분할 위치를 바꿔 보세요 — 점수가 위아래로 흔들리죠. 이 한 숫자만 보고 "우리 모델은 80점"이라 말하면 — 사실은 운이 만든 숫자일 수 있어요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 한 번 나눈 점수는 분할 운에 흔들려요. 믿기 어렵죠.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--hot)">Step 01 — k-Fold Rotation</span>
+    <h2>돌아가며 한 조각씩 시험</h2>
+    <p class="lead">데이터를 k조각으로 나눠요(예: 5). 1라운드는 1번 조각이 시험·나머지가 훈련, 2라운드는 2번 조각이 시험… 이렇게 <b>모든 조각이 한 번씩</b> 시험을 봐요. 라운드마다 점수가 나오고, 그 <b>평균</b>이 최종 성적. 한 조각의 운이 평균에 묻혀 안정돼요. ▶로 시험 조각이 도는 걸 보세요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 모든 조각이 한 번씩 시험 → 점수 평균. 데이터도 알뜰히 써요.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Mind the Leak</span>
+    <h2>가공도 폴드 안에서</h2>
+    <p class="lead">CH 04의 <b>데이터 누수</b>가 여기서 다시 발목을 잡아요. 스케일링·특징 선택 같은 <b>데이터 가공을 전체 데이터로 먼저</b> 해버리면 — 시험 조각의 정보가 훈련에 새어들어 점수가 부풀어요. 올바른 순서는 <b>각 라운드마다, 훈련 조각만 보고</b> 가공 기준을 정하고 시험 조각엔 그걸 적용하는 것. 토글로 잘못된/올바른 순서를 비교해 보세요.</p>
+    <div class="ctl" id="play2"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <div class="nbox">⚠️ <b>흔한 누수</b> — "전체 데이터로 스케일 평균을 구한 뒤 교차검증"은 미묘하지만 누수예요. 시험 조각의 분포가 가공에 반영됐으니까요. 또 하이퍼파라미터를 시험셋으로 고르는 것도 누수. 철칙은 변함없어요 — <b>시험에 쓸 데이터는 그 라운드의 학습 전 과정에서 보면 안 돼요</b>.</div>
+    <p class="note" style="margin-top:6px">→ 모든 가공은 폴드 안에서. 시험 조각은 끝까지 격리.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Takeaways</span>
+    <h2>정리</h2>
+    <p class="lead">교차검증 = 돌아가며 시험 보고 점수를 평균 — 운을 빼고 안정된 평가를, 데이터도 알뜰히. 하이퍼파라미터(k, 규제 세기 등) 고르기에도 이걸 써요(시험셋은 끝까지 봉인). 여기까지가 PART D(평가). 이제 마지막 PART E — 실전에서 모델보다 더 중요할 때가 많은 <b>특징</b> 이야기, 그리고 지금까지의 모든 조각을 한 흐름으로 꿰는 종합으로 갑니다.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 다음 → <a href="14-features.html" style="color:var(--q);font-weight:700">CH 14 · 특징이 절반</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '13 · 교차검증');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: one split is luck =====
+(function(){
+  const scores=[72,85,68,91,79]; // different split positions
+  let idx=0;
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="re0">다른 데서 자르기 🎲</button><span class="note" id="cnt0" style="margin-left:8px"></span>`;
+  function render(){ const W=460,H=170; let s='';
+    // single train/test bar with split at varying position
+    const splitFrac=[0.7,0.8,0.65,0.75,0.6][idx]; const tw=W-40;
+    const sx=20+tw*splitFrac;
+    s+=`<rect x="20" y="40" width="${(tw*splitFrac-4).toFixed(1)}" height="40" rx="6" fill="${ML.C.train}" opacity="0.5" stroke="${ML.C.train}" stroke-width="1.2"/>`;
+    s+=`<rect x="${sx.toFixed(1)}" y="40" width="${(tw*(1-splitFrac)-2).toFixed(1)}" height="40" rx="6" fill="${ML.C.test}" opacity="0.9" stroke="${ML.C.test}" stroke-width="1.2"/>`;
+    s+=`<text x="${20+tw*splitFrac/2}" y="65" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="#0b0e14">훈련</text>`;
+    s+=`<text x="${sx+tw*(1-splitFrac)/2}" y="65" text-anchor="middle" font-size="11" font-family="monospace" font-weight="700" fill="#0b0e14">시험</text>`;
+    // big score
+    const sc=scores[idx];
+    s+=`<text x="${W/2}" y="125" text-anchor="middle" font-size="30" font-family="monospace" font-weight="800" fill="${sc>=85?ML.C.good:sc<=70?ML.C.dead:ML.C.hot}">${sc}점</text>`;
+    s+=`<text x="${W/2}" y="148" text-anchor="middle" font-size="9.5" font-family="monospace" fill="${ML.C.faint}">같은 모델, 분할만 바꿈</text>`;
+    document.getElementById('s0').innerHTML=ML.svg(W,H,s,'한 번의 운빨');
+    document.getElementById('cnt0').textContent=`분할 ${idx+1}/5`;
+    document.getElementById('lab0').innerHTML=`이번 분할의 시험 점수 = <b style="color:${sc>=85?ML.C.good:sc<=70?ML.C.dead:ML.C.hot}">${sc}점</b>. 자르는 위치만 바꿔도 ${Math.min(...scores)}~${Math.max(...scores)}점을 오가요 — 한 숫자를 믿기 어렵죠.`;
+  }
+  document.getElementById('re0').onclick=()=>{idx=(idx+1)%scores.length;render();};
+  render();
+})();
+
+// ===== STEP 1: k-fold rotation =====
+(function(){
+  let k=5, round=0;
+  const scores=[78,82,75,80,85,83];
+  const play=document.getElementById('play1');
+  play.innerHTML=`<label>폴드 수 <input type="range" id="slk" min="3" max="6" value="5"> <span id="kv">5</span></label>`+
+                 `<button class="btn" id="next1">다음 라운드 ▶</button>`;
+  function render(){ const W=460,H=190;
+    let s=ML.kfold(50,40,{k, testFold:round%k, w:W-100, fh:34, title:`라운드 ${round%k+1} — ${round%k+1}번 조각이 시험`});
+    // running average
+    const used=scores.slice(0,k);
+    const avg=used.reduce((a,b)=>a+b,0)/used.length;
+    s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="11" font-family="monospace" fill="${ML.C.muted}">각 라운드 점수: ${used.join(' · ')}</text>`;
+    s+=`<text x="${W/2}" y="150" text-anchor="middle" font-size="22" font-family="monospace" font-weight="800" fill="${ML.C.good}">평균 ${avg.toFixed(1)}점</text>`;
+    s+=`<text x="${W/2}" y="170" text-anchor="middle" font-size="9" font-family="monospace" fill="${ML.C.faint}">← 이게 안정된 최종 성적</text>`;
+    document.getElementById('s1').innerHTML=ML.svg(W,H,s,'k-폴드');
+    document.getElementById('kv').textContent=k;
+    document.getElementById('lab1').innerHTML=`${k}개 조각 중 <b style="color:${ML.C.test}">${round%k+1}번</b>이 시험, 나머지로 학습. 모든 조각이 한 번씩 시험을 본 뒤 점수를 <b style="color:${ML.C.good}">평균(${avg.toFixed(1)})</b> — 한 번의 운빨이 사라졌어요.`;
+  }
+  document.getElementById('slk').oninput=e=>{k=+e.target.value;round=0;render();};
+  document.getElementById('next1').onclick=()=>{round++;render();};
+  render();
+})();
+
+// ===== STEP 2: leakage =====
+(function(){
+  let correct=false;
+  const play=document.getElementById('play2');
+  play.innerHTML=`<button class="btn" id="wr2">전체로 먼저 가공</button><button class="btn" id="ok2">폴드 안에서 가공</button>`;
+  function render(){ const W=460,H=180; let s='';
+    const P=ML.plane({x:20,y:20,w:W-40,h:90});
+    if(!correct){
+      s+=`<rect x="40" y="30" width="${W-80}" height="30" rx="6" fill="${ML.C.dead}" opacity="0.2" stroke="${ML.C.dead}" stroke-width="1.4"/>`;
+      s+=`<text x="${W/2}" y="50" text-anchor="middle" font-size="10.5" font-family="monospace" fill="${ML.C.dead}">① 전체 데이터로 스케일 평균 계산 (시험 포함 👀)</text>`;
+      s+=`<text x="${W/2}" y="80" text-anchor="middle" font-size="10.5" font-family="monospace" fill="${ML.C.muted}">② 그 다음 교차검증 → 점수가 부풀려짐</text>`;
+      s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="13" font-family="monospace" font-weight="700" fill="${ML.C.dead}">⚠ 누수! 시험 정보가 가공에 샘</text>`;
+    } else {
+      s+=`<rect x="40" y="30" width="${(W-80)*0.75}" height="30" rx="6" fill="${ML.C.train}" opacity="0.4" stroke="${ML.C.train}" stroke-width="1.4"/>`;
+      s+=`<rect x="${40+(W-80)*0.78}" y="30" width="${(W-80)*0.22}" height="30" rx="6" fill="${ML.C.test}" opacity="0.85" stroke="${ML.C.test}" stroke-width="1.4"/>`;
+      s+=`<text x="${40+(W-80)*0.375}" y="50" text-anchor="middle" font-size="10" font-family="monospace" fill="#0b0e14" font-weight="700">훈련 조각으로만 가공 기준</text>`;
+      s+=`<text x="${40+(W-80)*0.89}" y="50" text-anchor="middle" font-size="9" font-family="monospace" fill="#0b0e14" font-weight="700">적용🔒</text>`;
+      s+=`<text x="${W/2}" y="120" text-anchor="middle" font-size="13" font-family="monospace" font-weight="700" fill="${ML.C.good}">✓ 격리 유지 — 점수가 정직</text>`;
+    }
+    document.getElementById('s2').innerHTML=ML.svg(W,H,s,'누수');
+    document.getElementById('wr2').className='btn'+(!correct?' active':'');
+    document.getElementById('ok2').className='btn'+(correct?' active':'');
+    document.getElementById('lab2').innerHTML= correct
+      ? `<b style="color:${ML.C.good}">올바른 순서</b> — 각 라운드에서 <b>훈련 조각만</b> 보고 스케일·기준을 정하고, 시험 조각엔 그대로 적용. 시험 정보가 새지 않아요.`
+      : `<b style="color:${ML.C.dead}">잘못된 순서</b> — 전체로 먼저 가공하면 시험 조각의 정보가 슬쩍 반영돼요. 점수는 좋아 보여도 실전에서 무너지죠.`;
+  }
+  document.getElementById('wr2').onclick=()=>{correct=false;render();};
+  document.getElementById('ok2').onclick=()=>{correct=true;render();};
+  render();
+})();
+
+// ===== STEP 3: summary =====
+(function(){ const W=460,H=120;
+  let s=`<text x="${W/2}" y="24" text-anchor="middle" font-size="12.5" font-family="monospace" font-weight="700" fill="${ML.C.hot}">돌아가며 시험, 평균</text>`;
+  const rows=[['문제','한 번 분할은 운에 흔들림','var(--dead)'],['해법','k조각 돌려가며 평가→평균','var(--q)'],['주의','가공도 폴드 안에서(누수)','var(--v)']];
+  rows.forEach((r,idx)=>{ const y=38+idx*26; s+=`<rect x="20" y="${y}" width="${W-40}" height="22" rx="6" fill="var(--panel)" stroke="${r[2]}" stroke-width="1.1"/><text x="34" y="${y+15}" fill="${r[2]}" font-size="11" font-family="monospace" font-weight="700">${r[0]}</text><text x="${W-30}" y="${y+15}" fill="var(--ink)" font-size="9.5" font-family="monospace" text-anchor="end">${r[1]}</text>`; });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'정리');
+  document.getElementById('lab3').innerHTML='평가까지 끝 — 다음은 모델보다 중요할 때가 많은 특징 이야기.';
+})();
+</script>
+</body>
+</html>

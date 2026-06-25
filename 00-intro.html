@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0번 · 데이터에서 규칙을 배운다 — 머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .big{font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--ink); margin:12px 0 6px; padding:14px 16px; border-radius:14px; background:var(--panel-2); border:1px solid var(--line); line-height:1.6;}
+  .big:empty{display:none;}
+  .ctl{display:flex; align-items:center; gap:10px; margin:10px 0; flex-wrap:wrap;}
+  svg{display:block; width:100%;}
+  .gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+  .gcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .gcard h4{margin:0 0 4px;font-size:13px;font-family:'JetBrains Mono',monospace}
+  .gcard p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.55}
+  code{font-family:'JetBrains Mono',monospace;background:var(--panel-2);padding:1px 5px;border-radius:5px;font-size:.92em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav" id="topnav"></div>
+
+  <header>
+    <div class="tag" style="color:var(--hot)">0번 입문</div>
+    <h1>데이터에서 규칙을 배운다</h1>
+    <p class="intro">사람이 규칙을 일일이 써넣는 대신, 기계에게 <b>정답이 달린 예시</b>를 잔뜩 보여주면 — 기계가 그 안의 패턴을 스스로 찾아 <b>처음 보는 데이터를 예측</b>해요. 이게 <b>지도학습</b>이에요. 답이 숫자면 선을 맞추고(<b>회귀</b>), 범주면 경계를 긋죠(<b>분류</b>). 이 트랙은 라이브러리 사용법이 아니라 — 선이 점에 맞춰지고, 경계가 휘고, 모델이 잡음까지 외워버리는 과정을 <b>움직이는 그림</b>으로 봐요. 지금은 큰 그림만.</p>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button data-s="0" class="active">00 · 규칙을 짜기 vs 배우기</button>
+    <button data-s="1">01 · 회귀 vs 분류</button>
+    <button data-s="2">02 · 용어 한 장</button>
+    <button data-s="3">03 · 코스맵</button>
+  </nav>
+
+  <!-- STEP 0 -->
+  <section class="panel show" data-panel="0">
+    <span class="kicker" style="color:var(--hot)">Step 00 — Rules vs Learning</span>
+    <h2>규칙을 짜 넣을까, 배우게 할까</h2>
+    <p class="lead">"스팸 메일 거르기"를 만든다고 해봐요. 옛 방식은 사람이 규칙을 <b>직접</b> 써요 — "<code>무료</code>가 있으면 스팸". 하지만 예외가 끝없죠. 머신러닝은 반대예요: <b>정답이 달린 예시</b>(스팸/정상 메일 수천 통)를 보여주면, 기계가 규칙을 <b>스스로</b> 찾아요. 버튼으로 두 방식을 비교해 보세요.</p>
+    <div class="ctl" id="play0"></div>
+    <div class="scene" id="s0"></div>
+    <p class="big" id="lab0"></p>
+    <p class="note" style="margin-top:6px">→ 핵심 전환: 규칙을 <b>쓰는</b> 게 아니라, 예시로부터 <b>배우게</b> 한다.</p>
+  </section>
+
+  <!-- STEP 1 -->
+  <section class="panel" data-panel="1">
+    <span class="kicker" style="color:var(--q)">Step 01 — Regression vs Classification</span>
+    <h2>두 갈래: 숫자냐 범주냐</h2>
+    <p class="lead">지도학습이 푸는 문제는 크게 둘이에요. 답이 <b>연속된 숫자</b>면(집값, 온도) — 점들을 잘 지나는 <b>선</b>을 찾는 <b>회귀</b>. 답이 <b>범주</b>면(개/고양이, 스팸/정상) — 영역을 가르는 <b>경계</b>를 긋는 <b>분류</b>. 토글해 보세요. 둘 다 "예시로 규칙 배우기"라는 점은 같아요.</p>
+    <div class="ctl" id="play1"></div>
+    <div class="scene" id="s1"></div>
+    <p class="big" id="lab1"></p>
+    <p class="note" style="margin-top:6px">→ 회귀(02) = 선 맞추기 · 분류(03) = 경계 긋기. 답의 종류가 갈림길.</p>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-panel="2">
+    <span class="kicker" style="color:var(--v)">Step 02 — Vocabulary</span>
+    <h2>앞으로 쓸 말</h2>
+    <p class="lead">계속 나올 핵심 용어예요. 지금 외울 필요 없어요 — 그림으로 반복해서 만나요.</p>
+    <div class="gloss" id="gloss"></div>
+    <div class="scene" id="s2"></div>
+    <p class="big" id="lab2"></p>
+    <p class="note" style="margin-top:6px">→ 특징/라벨·모델·훈련/시험·일반화. 그림이 곧 정의.</p>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-panel="3">
+    <span class="kicker" style="color:var(--good)">Step 03 — Course Map</span>
+    <h2>어디로 가나</h2>
+    <p class="lead">다섯 PART. 무엇을 배우는지(A)로 토대를 닦고 — <b>일반화</b>(B: 외우기 말고 진짜 배우기)와 <b>모델 동물원</b>(C: kNN·트리·숲)이 두 기둥이에요. 그 뒤 제대로 평가하고(D), 현실의 특징·전체 흐름으로 마무리(E). 마지막 챕터(16)에선 SVM·비지도학습·딥러닝으로 가는 다리를 놓고 전체를 회고해요.</p>
+    <div class="scene" id="s3"></div>
+    <p class="big" id="lab3"></p>
+    <p class="note" style="margin-top:14px">→ 시작 → <a href="01-supervised.html" style="color:var(--q);font-weight:700">CH 01 · 지도학습이란</a></p>
+  </section>
+
+  <p class="foot">// 코드 없는 직관 입문 · <a href="index.html">목차</a></p>
+</div>
+
+<script src="shared/lib.js"></script>
+<script src="shared/lib-ml.js"></script>
+<script>
+VZ.mountTopnav('#topnav', '0번 · 데이터에서 규칙을 배운다');
+VZ.setupStepper();
+const ML=VZ.ML;
+
+// ===== STEP 0: rules vs learning =====
+(function(){
+  let mode=0; // 0=rules, 1=learning
+  const play=document.getElementById('play0');
+  play.innerHTML=`<button class="btn" id="m0" class="active">규칙을 직접 쓰기</button><button class="btn" id="m1">예시로 배우기</button>`;
+  function render(){ const W=460,H=200; let s='';
+    if(mode===0){
+      // hand-written rules: a brittle chain
+      const rules=['if "무료" → 스팸','elif "당첨" → 스팸','elif "!!!" 3개↑ → 스팸','elif ... (끝없음)','else → 정상'];
+      s+=`<text x="230" y="22" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.faint}">사람이 규칙을 하나하나 추가</text>`;
+      rules.forEach((r,i)=>{ const y=40+i*30; const last=i===3;
+        s+=`<rect x="60" y="${y}" width="340" height="24" rx="6" fill="var(--panel)" stroke="${last?ML.C.bad:ML.C.line}" stroke-width="1.2"/>`;
+        s+=`<text x="74" y="${y+16}" font-size="11" font-family="monospace" fill="${last?ML.C.bad:ML.C.muted}">${ML.esc(r)}</text>`;
+      });
+      document.getElementById('s0').innerHTML=ML.svg(W,H,s,'규칙 직접 쓰기');
+      document.getElementById('lab0').innerHTML=`<b style="color:${ML.C.bad}">규칙을 직접 쓰기</b> — 명확하지만, 예외가 끝없이 생겨요. 새 수법이 나올 때마다 규칙을 또 추가해야 하죠. 사람이 못 따라가요.`;
+    } else {
+      // learning: examples in, model out
+      s+=`<text x="230" y="22" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.good}">정답 달린 예시 → 기계가 규칙을 발견</text>`;
+      // examples column
+      const ex=[['📧 "무료 당첨!!!"','스팸',1],['📧 "회의 자료 첨부"','정상',0],['📧 "지금 클릭"','스팸',1],['📧 "점심 같이?"','정상',0]];
+      ex.forEach((e,i)=>{ const y=44+i*34; const col=ML.clsCol(e[2]);
+        s+=`<rect x="34" y="${y}" width="170" height="26" rx="6" fill="var(--panel)" stroke="${ML.C.line}" stroke-width="1"/>`;
+        s+=`<text x="44" y="${y+17}" font-size="10" font-family="monospace" fill="${ML.C.muted}">${ML.esc(e[0])}</text>`;
+        s+=ML.chip(232,y+13,e[1],{color:col,minW:48,h:20});
+        s+=ML.arrow(258,y+13,300,100,{color:'var(--slate)',lw:1});
+      });
+      // model box
+      s+=`<rect x="300" y="74" width="120" height="56" rx="12" fill="var(--panel)" stroke="${ML.C.v}" stroke-width="2"/>`;
+      s+=`<text x="360" y="98" text-anchor="middle" font-size="12" font-family="'Pretendard'" font-weight="700" fill="${ML.C.v}">모델</text>`;
+      s+=`<text x="360" y="116" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">배운 규칙</text>`;
+      s+=ML.arrow(360,130,360,168,{color:ML.C.good,lw:1.6});
+      s+=`<text x="360" y="184" text-anchor="middle" font-size="10" font-family="monospace" fill="${ML.C.good}">새 메일도 예측 →</text>`;
+      document.getElementById('s0').innerHTML=ML.svg(W,H,s,'예시로 배우기');
+      document.getElementById('lab0').innerHTML=`<b style="color:${ML.C.good}">예시로 배우기</b> — 사람은 <b>정답(라벨)</b>만 달아주고, 규칙은 기계가 찾아요. 새 수법도 비슷한 예시만 있으면 잡아내죠. 이게 지도학습.`;
+    }
+    document.getElementById('m0').className='btn'+(mode===0?' active':'');
+    document.getElementById('m1').className='btn'+(mode===1?' active':'');
+  }
+  document.getElementById('m0').onclick=()=>{ mode=0; render(); };
+  document.getElementById('m1').onclick=()=>{ mode=1; render(); };
+  render();
+})();
+
+// ===== STEP 1: regression vs classification =====
+(function(){
+  let mode=0; // 0=regression, 1=classification
+  const play=document.getElementById('play1');
+  play.innerHTML=`<button class="btn" id="r0">회귀 (숫자)</button><button class="btn" id="r1">분류 (범주)</button>`;
+  const reg=[{x:0.1,y:0.2},{x:0.25,y:0.32},{x:0.4,y:0.38},{x:0.55,y:0.55},{x:0.7,y:0.62},{x:0.85,y:0.78}];
+  const cls=[{x:0.2,y:0.7,c:0},{x:0.3,y:0.55,c:0},{x:0.25,y:0.82,c:0},{x:0.4,y:0.68,c:0},
+             {x:0.7,y:0.32,c:1},{x:0.8,y:0.45,c:1},{x:0.75,y:0.2,c:1},{x:0.62,y:0.35,c:1}];
+  function render(){ const W=460,H=240; let s='';
+    if(mode===0){
+      s+=ML.scatter(70,20,320,200,{pts:reg,line:{m:0.72,b:0.14},residuals:true,axes:['넓이 →','집값 →'],title:'회귀 — 점을 잘 지나는 선'});
+      document.getElementById('s1').innerHTML=ML.svg(W,H,s,'회귀');
+      document.getElementById('lab1').innerHTML=`<b style="color:${ML.C.fit}">회귀</b> — 답이 <b>연속된 숫자</b>. 점들을 가장 잘 지나는 <b>선</b>을 찾아요. 주황 세로선은 점과 선의 어긋남(<b style="color:${ML.C.resid}">잔차</b>) — 이걸 줄일수록 좋은 선. (→ 02)`;
+    } else {
+      s+=ML.boundary(70,20,320,200,{regionFn:(nx,ny)=> (nx+ (1-ny))/2 > 0.52 ? 1:0, pts:cls, cols:16, rows:11, title:'분류 — 영역을 가르는 경계'});
+      document.getElementById('s1').innerHTML=ML.svg(W,H,s,'분류');
+      document.getElementById('lab1').innerHTML=`<b style="color:${ML.C.cls[1]}">분류</b> — 답이 <b>범주</b>(여기선 두 종류). 색이 다른 두 무리를 가르는 <b>경계</b>를 그어요. 경계 한쪽은 청록, 다른 쪽은 앰버. (→ 03)`;
+    }
+    document.getElementById('r0').className='btn'+(mode===0?' active':'');
+    document.getElementById('r1').className='btn'+(mode===1?' active':'');
+  }
+  document.getElementById('r0').onclick=()=>{ mode=0; render(); };
+  document.getElementById('r1').onclick=()=>{ mode=1; render(); };
+  render();
+})();
+
+// ===== STEP 2: glossary =====
+(function(){ const items=[
+    ['특징 / 라벨 (feature/label)','입력으로 주는 값들(특징)과 맞혀야 할 정답(라벨). "넓이→집값"이면 넓이=특징, 집값=라벨.','var(--q)'],
+    ['모델 (model)','예시에서 배운 규칙 덩어리. 새 입력을 넣으면 예측이 나와요.','var(--v)'],
+    ['훈련 / 시험 (train/test)','배울 때 쓰는 데이터(훈련)와 평가할 때 쓰는 데이터(시험). 섞으면 안 돼요.','var(--hot)'],
+    ['일반화 (generalization)','외운 게 아니라 진짜 배웠는지 — 처음 보는 데이터도 잘 맞히는 능력.','var(--good)']
+  ];
+  document.getElementById('gloss').innerHTML=items.map(it=>
+    `<div class="gcard" style="border-color:${it[2]}"><h4 style="color:${it[2]}">${it[0]}</h4><p>${it[1]}</p></div>`).join('');
+  const W=460,H=130; let s='';
+  // feature -> model -> prediction flow
+  s+=`<rect x="26" y="44" width="110" height="44" rx="10" fill="var(--panel)" stroke="${ML.C.q}" stroke-width="1.6"/>`;
+  s+=`<text x="81" y="64" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.q}">특징 + 라벨</text>`;
+  s+=`<text x="81" y="80" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">예시 데이터</text>`;
+  s+=ML.arrow(136,66,182,66,{color:'var(--slate)',lw:1.4});
+  s+=`<text x="159" y="58" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">훈련</text>`;
+  s+=`<rect x="182" y="44" width="96" height="44" rx="10" fill="var(--panel)" stroke="${ML.C.v}" stroke-width="1.6"/>`;
+  s+=`<text x="230" y="70" text-anchor="middle" font-size="12" font-family="'Pretendard'" font-weight="700" fill="${ML.C.v}">모델</text>`;
+  s+=ML.arrow(278,66,324,66,{color:'var(--slate)',lw:1.4});
+  s+=`<text x="301" y="58" text-anchor="middle" font-size="8" font-family="monospace" fill="${ML.C.faint}">예측</text>`;
+  s+=`<rect x="324" y="44" width="110" height="44" rx="10" fill="var(--panel)" stroke="${ML.C.good}" stroke-width="1.6"/>`;
+  s+=`<text x="379" y="64" text-anchor="middle" font-size="11" font-family="'Pretendard'" font-weight="700" fill="${ML.C.good}">새 입력의 답</text>`;
+  s+=`<text x="379" y="80" text-anchor="middle" font-size="8.5" font-family="monospace" fill="${ML.C.faint}">처음 본 데이터</text>`;
+  document.getElementById('s2').innerHTML=ML.svg(W,H,s,'용어 흐름');
+  document.getElementById('lab2').innerHTML='이 네 단어가 트랙 전체의 뼈대예요. <b>특징·라벨</b>로 <b>모델</b>을 <b>훈련</b>하고, 처음 본 데이터에 <b>일반화</b>되는지로 평가해요.';
+})();
+
+// ===== STEP 3: course map =====
+(function(){ const W=460,H=210;
+  const parts=[['A','무엇을 배우나','var(--q)',false],['B','일반화 — 외우기 말고 배우기 · 기둥','var(--hot)',true],['C','모델 동물원 — kNN·트리·숲 · 기둥','var(--hot)',true],['D','제대로 평가하기','var(--q)',false],['E','현실의 특징과 종합','var(--good)',false]];
+  let s='';
+  parts.forEach((p,i)=>{ const y=14+i*38; s+=`<rect x="20" y="${y}" width="${W-40}" height="32" rx="8" fill="var(--panel)" stroke="${p[2]}" stroke-width="${p[3]?2:1.2}"/>`;
+    s+=`<text x="36" y="${y+21}" font-size="13" font-family="monospace" font-weight="700" fill="${p[2]}">${p[0]}</text>`;
+    s+=`<text x="64" y="${y+21}" font-size="12.5" font-family="'Pretendard'" fill="var(--ink)">${p[1]}</text>`;
+    if(p[3]) s+=`<text x="${W-34}" y="${y+21}" text-anchor="end" font-size="10" font-family="monospace" fill="var(--hot)">★ 기둥</text>`;
+  });
+  document.getElementById('s3').innerHTML=ML.svg(W,H,s,'코스맵');
+  document.getElementById('lab3').innerHTML='무엇을 배우나(A)로 시작해, <b>일반화</b>(B)와 <b>모델 동물원</b>(C)을 깊게 — 그리고 평가(D)·현실(E)로 마무리. 출발해요.';
+})();
+</script>
+</body>
+</html>

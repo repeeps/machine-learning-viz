@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>머신러닝, 눈으로 보기</title>
+<link rel="stylesheet" href="shared/theme.css">
+<link rel="icon" type="image/svg+xml" href="shared/favicon.svg">
+<style>
+  .hero{text-align:center; padding:30px 0 10px;}
+  .hero .tag{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.25em; text-transform:uppercase; color:var(--q);}
+  .hero h1{font-size:clamp(30px,6vw,52px); font-weight:800; letter-spacing:-.03em; margin:14px 0 12px; line-height:1.05;
+    background:linear-gradient(100deg,#fff,#9bb6ff 55%,var(--v)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero p{color:var(--muted); max-width:680px; margin:0 auto; font-size:16px;}
+  .seclabel{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); margin:46px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+  .seclabel b{color:var(--hot);}
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;}
+  .ccard{display:block; text-decoration:none; background:var(--panel); border:1px solid var(--line); border-radius:18px;
+    padding:22px; transition:.22s; position:relative; overflow:hidden;}
+  .ccard::before{content:''; position:absolute; inset:0 auto 0 0; width:4px; background:var(--accent,var(--q)); opacity:.8;}
+  .ccard:hover{transform:translateY(-4px); border-color:var(--accent,var(--q)); box-shadow:0 14px 36px rgba(0,0,0,.35);}
+  .ccard .num{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent,var(--q)); font-weight:700;}
+  .ccard h3{margin:8px 0 8px; font-size:19px; color:var(--ink); letter-spacing:-.01em;}
+  .ccard p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.6;}
+  .ccard .chips{margin-top:14px; display:flex; gap:6px; flex-wrap:wrap;}
+  .ccard .chip{font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:6px;
+    background:var(--panel-2); border:1px solid var(--line); color:var(--muted);}
+  .foot{margin-top:60px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="tag">수식·코드 없는 직관 입문 · 0번 + 16챕터</div>
+    <h1>머신러닝, 눈으로 보기</h1>
+    <p>기계가 데이터에서 <b>규칙을 배운다</b>는 건 무슨 뜻일까요? 정답이 달린 예시를 잔뜩 보여주면, 기계는 그 안의 패턴을 찾아 <b>처음 보는 데이터를 예측</b>해요(지도학습). 이 트랙은 라이브러리 사용법이 아니라 — 선을 맞추고, 경계를 긋고, 과적합에 빠지고, 그걸 막는 과정을 <b>움직이는 그림</b>으로 봐요. 결정 경계가 휘고, 잔차가 줄고, 과녁에 탄착군이 흩어지는 걸 직접 만지며.</p>
+  </div>
+
+  <a href="00-intro.html" style="display:block;text-decoration:none;margin:8px 0 4px;padding:18px 22px;border-radius:16px;background:linear-gradient(100deg,rgba(251,191,36,.12),rgba(55,189,248,.08));border:1px solid var(--hot);transition:.2s">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--hot);font-weight:700">👋 처음이세요?</div>
+    <div style="font-size:18px;font-weight:800;color:var(--ink);margin:6px 0 4px">0번 — 데이터에서 규칙을 배운다</div>
+    <div style="font-size:13.5px;color:var(--muted)">정답 달린 예시로 패턴을 배워 예측하는 게 지도학습. 회귀 vs 분류의 차이, 핵심 용어, 코스맵을 한눈에. →</div>
+  </a>
+  <p class="note" style="margin:6px 2px 0;color:var(--faint);font-size:13px">📚 처음이라면 <b>0번부터 순서대로</b>. <b>라이브러리 강좌가 아니라 멘탈 모델</b>이에요(신경망 딥러닝은 별도 트랙). 척추는 <b>무엇을 배우나(A) → 일반화(B) → 모델 동물원(C) → 평가(D) → 현실·종합(E)</b>. <b style="color:var(--hot)">일반화(B)</b>와 <b style="color:var(--hot)">모델 동물원(C)</b>이 두 기둥이에요.</p>
+
+  <div class="seclabel">PART A · 무엇을 배우나</div>
+  <div class="cards">
+    <a class="ccard" href="01-supervised.html"><div class="num">01</div><h3>지도학습이란</h3><p>입력(특징)과 정답(라벨)이 짝지어진 예시로 규칙을 배워요. 답이 숫자면 회귀, 범주면 분류.</p><div class="chips"><span class="chip">label</span></div></a>
+    <a class="ccard" href="02-regression.html"><div class="num">02</div><h3>회귀 — 선을 맞추다</h3><p>점들을 가장 잘 지나는 선 찾기. 점과 선 사이 거리(잔차)를 줄일수록 좋은 선.</p><div class="chips"><span class="chip">regression</span><span class="chip">residual</span></a>
+    <a class="ccard" href="03-classification.html"><div class="num">03</div><h3>분류 — 경계를 긋다</h3><p>"이쪽은 고양이, 저쪽은 개" — 영역을 가르는 결정 경계. 확률로 부드럽게 나누기도.</p><div class="chips"><span class="chip">decision boundary</span></a>
+  </div>
+
+  <div class="seclabel">PART B · <b>일반화</b> — 핵심 긴장</div>
+  <div class="cards">
+    <a class="ccard" href="04-generalize.html"><div class="num">04</div><h3>학습 vs 암기</h3><p>훈련 데이터로 배우고, 안 본 데이터로 평가해요. 외우기만 하면 실전에서 망해요.</p><div class="chips"><span class="chip">train/test</span></a>
+    <a class="ccard" href="05-overfitting.html"><div class="num">05</div><h3>과적합 vs 과소적합</h3><p>너무 단순하면 못 맞추고, 너무 복잡하면 잡음까지 외워요. 그 사이 어딘가가 정답.</p><div class="chips"><span class="chip">overfit</span></a>
+    <a class="ccard" href="06-bias-variance.html"><div class="num">06</div><h3>편향-분산</h3><p>과녁 비유로 — 한쪽으로 치우침(편향)과 들쭉날쭉함(분산). 둘의 줄다리기.</p><div class="chips"><span class="chip">bias-variance</span></a>
+    <a class="ccard" href="07-regularization.html"><div class="num">07</div><h3>규제</h3><p>복잡함에 벌점을 매겨 모델을 부드럽게. 출렁이던 곡선이 차분해져요.</p><div class="chips"><span class="chip">regularization</span></a>
+  </div>
+
+  <div class="seclabel">PART C · <b>모델 동물원</b></div>
+  <div class="cards">
+    <a class="ccard" href="08-knn.html"><div class="num">08</div><h3>kNN — 이웃에게 묻기</h3><p>가까운 k개 이웃의 다수결로 정해요. 그래서 "가깝다"의 잣대(스케일)가 중요하죠.</p><div class="chips"><span class="chip">kNN</span></a>
+    <a class="ccard" href="09-decision-tree.html"><div class="num">09</div><h3>결정트리 — 스무고개</h3><p>예/아니오 질문을 거듭해 영역을 잘라요. 너무 깊으면 과적합.</p><div class="chips"><span class="chip">tree</span></a>
+    <a class="ccard" href="10-ensemble.html"><div class="num">10</div><h3>앙상블 — 여럿이 모이면</h3><p>나무 한 그루보다 숲. 독립된 다수결(배깅)이나 실수 보완(부스팅)으로 강해져요.</p><div class="chips"><span class="chip">forest</span><span class="chip">boosting</span></a>
+  </div>
+
+  <div class="seclabel">PART D · 제대로 평가하기</div>
+  <div class="cards">
+    <a class="ccard" href="11-confusion.html"><div class="num">11</div><h3>정확도의 함정</h3><p>"99% 정확"인데 쓸모없을 수 있어요(불균형). 혼동행렬로 진짜 성적을 봐요.</p><div class="chips"><span class="chip">confusion matrix</span></a>
+    <a class="ccard" href="12-precision-recall.html"><div class="num">12</div><h3>정밀도와 재현율</h3><p>"잡은 것 중 진짜"(정밀도) vs "진짜 중 잡은 것"(재현율). 임계값으로 줄다리기.</p><div class="chips"><span class="chip">precision/recall</span></a>
+    <a class="ccard" href="13-cross-validation.html"><div class="num">13</div><h3>교차검증</h3><p>한 번 나눈 시험은 운빨. 여러 번 돌려가며 공정하게 — 그리고 시험지 미리 보기 금지.</p><div class="chips"><span class="chip">k-fold</span></a>
+  </div>
+
+  <div class="seclabel">PART E · 현실과 종합</div>
+  <div class="cards">
+    <a class="ccard" href="14-features.html"><div class="num">14</div><h3>특징이 절반</h3><p>좋은 입력이 좋은 모델보다 중요할 때가 많아요. 스케일 맞추기·새 특징 만들기.</p><div class="chips"><span class="chip">features</span></a>
+    <a class="ccard" href="15-pipeline.html"><div class="num">15</div><h3>한 흐름 종합</h3><p>데이터 → 특징 → 모델 → 학습 → 평가 → 예측. 배운 조각이 한 줄로 꿰여요.</p><div class="chips"><span class="chip">end-to-end</span></a>
+    <a class="ccard" href="16-beyond.html"><div class="num">16</div><h3>너머 · 회고</h3><p>SVM·정답 없는 비지도학습·딥러닝으로 가는 다리. 그리고 전체 멘탈 모델 정리.</p><div class="chips"><span class="chip">recap</span></a>
+  </div>
+
+  <p class="foot" style="color:var(--faint);font-size:13px;text-align:center;border-top:1px solid var(--line);padding-top:22px;">// 코드 없는 직관 입문 · 모든 그림은 브라우저에서 실시간 계산</p>
+</div>
+</body>
+</html>
